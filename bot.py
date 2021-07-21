@@ -18,7 +18,7 @@ bot = commands.Bot(command_prefix = prefix, intents = intents)
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
-    await bot.change_presence(activity=discord.Game("Going Insane"))
+    await bot.change_presence(activity = discord.Game("Going Insane | ;commands"))
 
 #Chooses a random greeting
 @bot.command()
@@ -48,37 +48,38 @@ async def invite(ctx):
 #Help list
 @bot.command()
 async def commands(ctx):
-    embed = discord.Embed(title = "Avalible Commands for Version 1.0 of RoboticPony:", color = 0x009933)
+    embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions", color = 0x009933)
     embed.add_field(name = ";wave", value = "Waves hello to the bot.")
     embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
     embed.add_field(name = ";commands", value = "You know what this does", inline = False)
     embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
-    embed.add_field(name = ";kick [user] [reason]", value = "Kick a member.", inline = False)
-    embed.add_field(name = ";ban [user] [reason]", value = "Bans a member.", inline = False)
-    embed.add_field(name = ";sleep", value = "Puts the bot to sleep.", inline = False)
+    embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
+    embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
+    embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
+    embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
     await ctx.send(embed = embed)
 
 @bot.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.0\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.0.1\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
-
 
 #Function kickMembers
 #Kicks a member and DMs them.
 @bot.command()
 async def kick(ctx, member: discord.User, *, reason = None):
-    if ctx.message.author.guild_permissions.ban_members:
+    if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
+        server = ctx.guild
         if member == ctx.message.author:
             await ctx.send("You cannot kick yourself!")
         #See if the moderator provided a reason.
         elif reason == None:
-            await member.send("You have been kicked by {0}.".format(moderator))
+            await member.send("You have been kicked from {0} by {1}.".format(server, moderator))
             await member.kick(reason = reason)
             await ctx.send("{0} has been kicked.".format(member))
         else:
-            await member.send("You have been kicked by {0} for {1}.".format(moderator, reason))
+            await member.send("You have been kicked by from {0} by {1} for {2}.".format(server, moderator, reason))
             await member.kick(reason = reason)
             await ctx.send("{0} has been kicked for {1}.".format(member, reason))
     else:
@@ -90,29 +91,31 @@ async def kick(ctx, member: discord.User, *, reason = None):
 async def ban(ctx, member: discord.User, *, reason = None):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
+        server = ctx.guild
         if member == ctx.message.author:
             await ctx.send("You cannot ban yourself!")
         #See if the moderator provided a reason.
         elif reason == None:
-            await member.send("You have been banned by {0}.".format(moderator))
+            await member.send("You have been banned from {0} by {1}.".format(server, moderator))
             await member.ban(reason = reason)
             await ctx.send("{0} has been banned.".format(member))
         else:
-            await member.send("You have been banned by {0} for {1}.".format(moderator, reason))
+            await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
             await member.ban(reason = reason)
             await ctx.send("{0} has been banned for {1}.".format(member, reason))
     else:
         await ctx.send("You don't have permission to run this command!")
 
-#Turns the bot off
+#Secret command wo
 @bot.command()
 async def sleep(ctx):
-    if ctx.message.author.guild_permissions.administrator:
+    owner_id = "687081333876719740"
+    if str(ctx.message.author.id) == str(owner_id):
         await ctx.send("Goodnight...")
         print("User terminated the bot.")
         quit()
     else:
-        await ctx.send("You don't have permission to run this command!")
+        await ctx.send("Only the bot owner can use this command!")
 
 
 bot.run("Hehe nothing to see here")
