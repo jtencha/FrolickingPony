@@ -69,7 +69,7 @@ async def about(ctx):
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
-@bot_has_permissions()
+@bot_has_permissions(administrator = True)
 async def kick(ctx, member: discord.User, *, reason = None):
     if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
@@ -80,7 +80,7 @@ async def kick(ctx, member: discord.User, *, reason = None):
             try:
                 await member.kick(reason = reason)
             except discord.Forbidden:
-                await ctx.send("I don't have permission to run this command!")
+                await ctx.send("You cannot kick this user!")
                 return
             try:
                 await member.send("You have been kicked from {0} by {1}.".format(server, moderator))
@@ -92,7 +92,7 @@ async def kick(ctx, member: discord.User, *, reason = None):
             try:
                 await member.kick(reason = reason)
             except discord.Forbidden:
-                await ctx.send("I don't have permission to run this command!")
+                await ctx.send("You cannot kick this user!")
                 return
             try:
                 await member.send("You have been kicked from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -109,6 +109,8 @@ async def kick(ctx, member: discord.User, *, reason = None):
 async def rejected(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
+    elif isinstance(error, BotMissingPermissions):
+        await ctx.send("This bot requires administrator.")
     else:
         await ctx.send(error)
 
@@ -117,7 +119,7 @@ async def rejected(ctx, error):
 #Bans a member and DMs them
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
-@bot_has_permissions()
+@bot_has_permissions(administrator = True)
 async def ban(ctx, member: discord.User, *, reason = None):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
@@ -128,7 +130,7 @@ async def ban(ctx, member: discord.User, *, reason = None):
             try:
                 await member.ban(reason = reason)
             except discord.Forbidden:
-                await ctx.send("I don't have permission to run this command!")
+                await ctx.send("You cannot ban this user!")
                 return
             try:
                 await member.send("You have been banned from {0} by {1}.".format(server, moderator))
@@ -140,7 +142,7 @@ async def ban(ctx, member: discord.User, *, reason = None):
             try:
                 await member.ban(reason = reason)
             except discord.Forbidden:
-                await ctx.send("I don't have permission to run this command. ")
+                await ctx.send("You cannot ban this user!.")
                 return
             try:
                 await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -156,6 +158,8 @@ async def ban(ctx, member: discord.User, *, reason = None):
 async def rejected(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
+    elif isinstance(error, BotMissingPermissions):
+        await ctx.send("This bot requires administrator.")
     else:
         await ctx.send(error)
 
