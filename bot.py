@@ -53,6 +53,7 @@ async def commands(ctx):
     embed.add_field(name = ";wave", value = "Waves hello to the bot.")
     embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
     embed.add_field(name = ";commands", value = "You know what this does", inline = False)
+    embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
     embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
     embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
     embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
@@ -91,7 +92,7 @@ async def denied(ctx, error):
 
 @bot.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.2.1\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.2.2\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function kickMembers
@@ -109,7 +110,7 @@ async def kick(ctx, member: discord.User, *, reason = None):
             try:
                 await member.kick(reason = reason)
             except discord.Forbidden:
-                await ctx.send("You cannot kick this user!")
+                await ctx.send("I was unable to kick this user.")
                 return
             try:
                 await member.send("You have been kicked from {0} by {1}.".format(server, moderator))
@@ -121,7 +122,7 @@ async def kick(ctx, member: discord.User, *, reason = None):
             try:
                 await member.kick(reason = reason)
             except discord.Forbidden:
-                await ctx.send("You cannot kick this user!")
+                await ctx.send("I was unable to kick this user.")
                 return
             try:
                 await member.send("You have been kicked from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -159,7 +160,7 @@ async def ban(ctx, member: discord.User, *, reason = None):
             try:
                 await member.ban(reason = reason)
             except discord.Forbidden:
-                await ctx.send("You cannot ban this user!")
+                await ctx.send("I was unable to ban this user.")
                 return
             try:
                 await member.send("You have been banned from {0} by {1}.".format(server, moderator))
@@ -171,7 +172,7 @@ async def ban(ctx, member: discord.User, *, reason = None):
             try:
                 await member.ban(reason = reason)
             except discord.Forbidden:
-                await ctx.send("You cannot ban this user!.")
+                await ctx.send("I was unable to ban this user.")
                 return
             try:
                 await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -206,3 +207,4 @@ async def sleep(ctx):
 
 
 bot.run("Hehe nothing to see here")
+
