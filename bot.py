@@ -54,11 +54,40 @@ async def commands(ctx):
     embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
     embed.add_field(name = ";commands", value = "You know what this does", inline = False)
     embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
+    embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
     embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
     embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
     embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
     embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.\n\nNote: this bot requires administrator to function properly.", inline = False)
     await ctx.send(embed = embed)
+
+@bot.command()
+async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
+    embed = discord.Embed(title = "Poll Created by {0}".format(ctx.message.author), description = "\n", color = 0x009933)
+    embed.add_field(name = "1️⃣ Option One:", value = "{0}".format(option_one), inline = False)
+    embed.add_field(name = "2️⃣ Option Two:", value = "{0}".format(option_two), inline = False)
+    if option_three != None:
+        embed.add_field(name = "3️⃣ Option Three:", value = "{0}".format(option_three), inline = False)
+        if option_four != None:
+            embed.add_field(name = "4️⃣ Option Four:", value = "{0}".format(option_four), inline = False)
+
+#Inefficient, but it gets the job done. I'll make it prettier and less repetitive later.
+    poll = await ctx.send(embed = embed)
+    await poll.add_reaction("1️⃣")
+    await poll.add_reaction("2️⃣")
+    if option_three != None:
+        await poll.add_reaction("3️⃣")
+        if option_four != None:
+            await poll.add_reaction("4️⃣")
+
+@poll.error
+async def denied(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send("You must include at least two choices!")
+    elif isinstance(error, BotMissingPermissions):
+        await ctx.send("Fatal error, please try again.")
+    else:
+        await ctx.send(error)
 
 @bot.command()
 async def about(ctx):
