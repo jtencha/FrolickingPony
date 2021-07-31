@@ -91,7 +91,7 @@ async def denied(ctx, error):
 
 @bot.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.1.1\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.2.1\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function kickMembers
