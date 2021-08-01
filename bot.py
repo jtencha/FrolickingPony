@@ -57,6 +57,7 @@ async def commands(ctx):
     embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
     embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
     embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
+    embed.add_field(name - ";mute", value = "Mute a user permanently", inline = False)
     embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
     embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
     embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.\n\nNote: this bot requires administrator to function properly.", inline = False)
@@ -95,6 +96,43 @@ async def about(ctx):
     embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.2.2\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
+#Function mute
+#Mutes a member forever and DMs them.
+@bot.command()
+@bot_has_permissions(administrator = True)
+async def mute(ctx, member: discord.User, *, reason = None):
+    if ctx.message.author.guild_permissions.mute_members:
+        moderator = ctx.message.author
+        server = ctx.guild
+        #Checks for a reason
+        #If none, assigns "Not specified"
+        if reason == None:
+            reason = "Not Specified"
+        try:
+            muterole = discord.utils.get(member.guild.roles, name = "Muted")
+            await member.add_roles(muterole)
+            await ctx.send("{0} has been muted.".format(member))
+        except AttributeError:
+            await ctx.send('Please configure a role named "Muted" for the bot to use.')
+        except discord.Forbidden:
+            await ctx.send("I was unable to mute this user.")
+            return
+        try:
+            await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, member, reason))
+        except discord.Forbidden:
+            await ctx.send("I can't DM this user.")
+    else:
+        await ctx.send("You don't have permission to run this command!")
+
+@mute.error
+async def nope(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send("You did not include a user!")
+    elif isinstance(error, BotMissingPermissions):
+        await ctx.send("This bot requires administrator.")
+    else:
+        await ctx.send(error)
+
 #Function kickMembers
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
@@ -105,31 +143,21 @@ async def kick(ctx, member: discord.User, *, reason = None):
         moderator = ctx.message.author
         server = ctx.guild
         #See if the moderator provided a reason.
+        #Assigns "Not specified" if none
         #Will still kick and return a custom error if DM fails.
         if reason == None:
-            try:
-                await member.kick(reason = reason)
-            except discord.Forbidden:
-                await ctx.send("I was unable to kick this user.")
-                return
-            try:
-                await member.send("You have been kicked from {0} by {1}.".format(server, moderator))
-            except discord.Forbidden:
-                await ctx.send("I can't DM this user. ")
+            reason = "Not Specified"
+        try:
+            await member.kick(reason = reason)
+        except discord.Forbidden:
+            await ctx.send("I was unable to kick this user.")
+            return
+        try:
+            await member.send("You have been kicked from {0} by {1} for {2}.".format(server, moderator, reason))
+        except discord.Forbidden:
+            await ctx.send("I can't DM this user. ")
 
-            await ctx.send("{0} has been kicked.".format(member))
-        else:
-            try:
-                await member.kick(reason = reason)
-            except discord.Forbidden:
-                await ctx.send("I was unable to kick this user.")
-                return
-            try:
-                await member.send("You have been kicked from {0} by {1} for {2}.".format(server, moderator, reason))
-            except discord.Forbidden:
-                await ctx.send("I can't DM this user. ")
-
-            await ctx.send("{0} has been kicked for {1}.".format(member, reason))
+        await ctx.send("{0} has been kicked for {1}.".format(member, reason))
     else:
         await ctx.send("You don't have permission to run this command!")
         return
@@ -155,31 +183,21 @@ async def ban(ctx, member: discord.User, *, reason = None):
         moderator = ctx.message.author
         server = ctx.guild
         #See if the moderator provided a reason.
+        #Assigns "not specified" if none.
         #Will still kick and return a custom error if DM fails.
         if reason == None:
-            try:
-                await member.ban(reason = reason)
-            except discord.Forbidden:
-                await ctx.send("I was unable to ban this user.")
-                return
-            try:
-                await member.send("You have been banned from {0} by {1}.".format(server, moderator))
-            except discord.Forbidden:
-                await ctx.send("I can't DM this user. ")
+            reason = "Not Specified"
+        try:
+            await member.ban(reason = reason)
+        except discord.Forbidden:
+            await ctx.send("I was unable to ban this user.")
+            return
+        try:
+            await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
+        except discord.Forbidden:
+            await ctx.send("I can't DM this user.")
 
-            await ctx.send("{0} has been banned.".format(member))
-        else:
-            try:
-                await member.ban(reason = reason)
-            except discord.Forbidden:
-                await ctx.send("I was unable to ban this user.")
-                return
-            try:
-                await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
-            except discord.Forbidden:
-                await ctx.send("I can't DM this user.")
-
-            await ctx.send("{0} has been banned for {1}.".format(member, reason))
+        await ctx.send("{0} has been banned for {1}.".format(member, reason))
     else:
         await ctx.send("You don't have permission to run this command!")
 
