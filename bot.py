@@ -57,7 +57,7 @@ async def commands(ctx):
     embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
     embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
     embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
-    embed.add_field(name - ";mute", value = "Mute a user permanently", inline = False)
+    embed.add_field(name = ";mute", value = "Mute a user permanently", inline = False)
     embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
     embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
     embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.\n\nNote: this bot requires administrator to function properly.", inline = False)
@@ -123,6 +123,7 @@ async def mute(ctx, member: discord.User, *, reason = None):
             await ctx.send("I can't DM this user.")
     else:
         await ctx.send("You don't have permission to run this command!")
+        return
 
 @mute.error
 async def nope(ctx, error):
