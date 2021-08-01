@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix = prefix, intents = intents)
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
-    await bot.change_presence(activity=discord.Game("Going Insane | ;commands 1"))
+    await bot.change_presence(activity = discord.Game("Going Insane | ;commands 1"))
 
 #Chooses a random greeting
 @bot.command()
@@ -122,12 +122,17 @@ async def mute(ctx, member: discord.User, *, reason = "Not Specified"):
         server = ctx.guild
         #Checks for a reason
         #If none, assigns "Not specified"
-        if reason == None:
-            reason = "Not Specified"
         try:
             muterole = discord.utils.get(member.guild.roles, name = "Muted")
-            await member.add_roles(muterole)
-            await ctx.send("{0} has been muted for {1}.".format(member, reason))
+            if muterole in member.roles:
+                await ctx.send("This user is already muted.")
+                return
+            elif moderator == member:
+                await ctx.send("You cannot mute yourself!")
+                return
+            else:
+                await member.add_roles(muterole)
+                await ctx.send("{0} has been muted for {1}.".format(member, reason))
         except AttributeError:
             await ctx.send('Please configure a role named "Muted" for the bot to use.')
         except discord.Forbidden:
@@ -158,8 +163,12 @@ async def unmute(ctx, member: discord.User, *, reason = "Not Specified"):
         server = ctx.guild
         try:
             muterole = discord.utils.get(member.guild.roles, name = "Muted")
-            await member.remove_roles(muterole)
-            await ctx.send("{0} has been unmuted for {1}.".format(member, reason))
+            if muterole not in member.roles:
+                await ctx.send("This user is already unmuted.")
+                return
+            else:
+                await member.remove_roles(muterole)
+                await ctx.send("{0} has been unmuted for {1}.".format(member, reason))
         except AttributeError:
             await ctx.send('Please configure a role named "Muted" for the bot to use.')
         except discord.Forbidden:
@@ -193,8 +202,9 @@ async def kick(ctx, member: discord.User, *, reason = "Not Specified"):
         #See if the moderator provided a reason.
         #Assigns "Not specified" if none
         #Will still kick and return a custom error if DM fails.
-        if reason == None:
-            reason = "Not Specified"
+        if moderator == member:
+            await ctx.send("You cannot kick yourself!")
+            return
         try:
             await member.kick(reason = reason)
         except discord.Forbidden:
@@ -233,8 +243,9 @@ async def ban(ctx, member: discord.User, *, reason = "Not Specified"):
         #See if the moderator provided a reason.
         #Assigns "not specified" if none.
         #Will still kick and return a custom error if DM fails.
-        if reason == None:
-            reason = "Not Specified"
+        if moderator == member:
+            await ctx.send("You cannot ban yourself!")
+            return
         try:
             await member.ban(reason = reason)
         except discord.Forbidden:
@@ -273,3 +284,4 @@ async def sleep(ctx):
 
 
 bot.run("Hehe nothing to see here")
+
