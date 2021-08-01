@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix = prefix, intents = intents)
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
-    await bot.change_presence(activity=discord.Game("Going Insane | ;commands"))
+    await bot.change_presence(activity=discord.Game("Going Insane | ;commands 1"))
 
 #Chooses a random greeting
 @bot.command()
@@ -48,20 +48,36 @@ async def invite(ctx):
 
 #Help list
 @bot.command()
-async def commands(ctx):
-    embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions", color = 0x009933)
-    embed.add_field(name = ";wave", value = "Waves hello to the bot.")
-    embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
-    embed.add_field(name = ";commands", value = "You know what this does", inline = False)
-    embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
-    embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
-    embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-    embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
-    embed.add_field(name = ";mute", value = "Mute a user permanently", inline = False)
-    embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
-    embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
-    embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.\n\nNote: this bot requires administrator to function properly.", inline = False)
-    await ctx.send(embed = embed)
+async def commands(ctx, type):
+    if type == "1":
+        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
+        embed.add_field(name = ";wave", value = "Waves hello to the bot.")
+        embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
+        embed.add_field(name = ";commands [number]", value = "You know what this does", inline = False)
+        embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
+        embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
+        embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
+        embed.add_field(name = "\nList 1 of 2", value = "\n\nNote: this bot requires administrator to function properly.", inline = False)
+        await ctx.send(embed = embed)
+    elif type == "2":
+        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
+        embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
+        embed.add_field(name = ";mute [user] [reason]*", value = "Mute a user permanently", inline = False)
+        embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
+        embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
+        embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
+        embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
+        embed.add_field(name = "\nList 2 of 2", value = "\n\nNote: this bot requires administrator to function properly.")
+        await ctx.send(embed = embed)
+    else:
+        await ctx.send("Use ;commands 1 or ;commands 2 to view the help menus.")
+
+@commands.error
+async def no_good(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send("You must include a number after ;commands")
+    else:
+        await ctx.send(error)
 
 @bot.command()
 async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
@@ -93,14 +109,14 @@ async def denied(ctx, error):
 
 @bot.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.2.2\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.2\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function mute
 #Mutes a member forever and DMs them.
 @bot.command()
 @bot_has_permissions(administrator = True)
-async def mute(ctx, member: discord.User, *, reason = None):
+async def mute(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
         server = ctx.guild
@@ -111,7 +127,7 @@ async def mute(ctx, member: discord.User, *, reason = None):
         try:
             muterole = discord.utils.get(member.guild.roles, name = "Muted")
             await member.add_roles(muterole)
-            await ctx.send("{0} has been muted.".format(member))
+            await ctx.send("{0} has been muted for {1}.".format(member, reason))
         except AttributeError:
             await ctx.send('Please configure a role named "Muted" for the bot to use.')
         except discord.Forbidden:
@@ -134,12 +150,43 @@ async def nope(ctx, error):
     else:
         await ctx.send(error)
 
+@bot.command()
+@bot_has_permissions(administrator = True)
+async def unmute(ctx, member: discord.User, *, reason = "Not Specified"):
+    if ctx.message.author.guild_permissions.mute_members:
+        moderator = ctx.message.author
+        server = ctx.guild
+        try:
+            muterole = discord.utils.get(member.guild.roles, name = "Muted")
+            await member.remove_roles(muterole)
+            await ctx.send("{0} has been unmuted for {1}.".format(member, reason))
+        except AttributeError:
+            await ctx.send('Please configure a role named "Muted" for the bot to use.')
+        except discord.Forbidden:
+            await ctx.send("I was unable to unmute this user.")
+            return
+        try:
+            await member.send("You have been unmuted by {0} in {1} for {2}.".format(moderator, member, reason))
+        except discord.Forbidden:
+            await ctx.send("I can't DM this user.")
+    else:
+        await ctx.send("You don't have permission to run this command!")
+        return
+
+@unmute.error
+async def nope(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send("You did not include a user!")
+    elif isinstance(error, BotMissingPermissions):
+        await ctx.send("This bot requires administrator.")
+    else:
+        await ctx.send(error)
 #Function kickMembers
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
 @bot_has_permissions(administrator = True)
-async def kick(ctx, member: discord.User, *, reason = None):
+async def kick(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
         server = ctx.guild
@@ -179,7 +226,7 @@ async def rejected(ctx, error):
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
 @bot_has_permissions(administrator = True)
-async def ban(ctx, member: discord.User, *, reason = None):
+async def ban(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
         server = ctx.guild
@@ -226,4 +273,3 @@ async def sleep(ctx):
 
 
 bot.run("Hehe nothing to see here")
-
