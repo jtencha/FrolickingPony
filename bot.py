@@ -75,6 +75,7 @@ async def commands(ctx, type = "1"):
         await ctx.send("Use ;commands 1 or ;commands 2 to view the help menus.")
 
 @bot.command()
+@bot_has_permissions(manage_messages = True)
 async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
     embed = discord.Embed(title = "Poll Created by {0}".format(ctx.message.author), description = "\n", color = 0x009933)
     embed.add_field(name = "1️⃣ Option One:", value = "{0}".format(option_one), inline = False)
@@ -85,6 +86,8 @@ async def poll(ctx, option_one, option_two, option_three = None, option_four = N
             embed.add_field(name = "4️⃣ Option Four:", value = "{0}".format(option_four), inline = False)
 
     #Inefficient, but it gets the job done. I'll make it prettier and less repetitive later.
+    #Deletes the ;poll command typed by the user.
+    await ctx.message.delete()
     poll = await ctx.send(embed = embed)
     await poll.add_reaction("1️⃣")
     await poll.add_reaction("2️⃣")
@@ -93,12 +96,14 @@ async def poll(ctx, option_one, option_two, option_three = None, option_four = N
         if option_four != None:
             await poll.add_reaction("4️⃣")
 
+#Checking for garbage
 @poll.error
 async def denied(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You must include at least two choices!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, please try again.")
+        await ctx.send("Fatal error...")
+        await ctx.send(error)
     else:
         await ctx.send(error)
 
@@ -149,6 +154,9 @@ async def nope(ctx, error):
     else:
         await ctx.send(error)
 
+#function unMute
+#Will only unmute if user has "muterole"
+#It will still return an error if the mute role isn't present.
 @bot.command()
 @bot_has_permissions(administrator = True)
 async def unmute(ctx, member: discord.User, *, reason = "Not Specified"):
@@ -193,8 +201,6 @@ async def kick(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
         server = ctx.guild
-        #See if the moderator provided a reason.
-        #Assigns "Not specified" if none
         #Will still kick and return a custom error if DM fails.
         if moderator == member:
             await ctx.send("You cannot kick yourself!")
@@ -234,8 +240,6 @@ async def ban(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
         server = ctx.guild
-        #See if the moderator provided a reason.
-        #Assigns "not specified" if none.
         #Will still kick and return a custom error if DM fails.
         if moderator == member:
             await ctx.send("You cannot ban yourself!")
