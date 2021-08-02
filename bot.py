@@ -59,7 +59,7 @@ async def commands(ctx, type = "1"):
         embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
         embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
         embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-        embed.add_field(name = "\nList 1 of 2", value = "\n\nNote: this bot requires administrator to function properly.", inline = False)
+        embed.add_field(name = "\nList 1 of 2", value = "\n\nAdministrator permissions are suggested.", inline = False)
         await ctx.send(embed = embed)
     elif type == "2":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
@@ -69,7 +69,7 @@ async def commands(ctx, type = "1"):
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
         embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
-        embed.add_field(name = "\nList 2 of 2", value = "\n\nNote: this bot requires administrator to function properly.")
+        embed.add_field(name = "\nList 2 of 2", value = "\n\nAdministrator permissions are suggested.")
         await ctx.send(embed = embed)
     else:
         await ctx.send("Use ;commands 1 or ;commands 2 to view the help menus.")
@@ -102,7 +102,7 @@ async def denied(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You must include at least two choices!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error...")
+        await ctx.send("Fatal error, command terminated.")
         await ctx.send(error)
     else:
         await ctx.send(error)
@@ -115,7 +115,7 @@ async def about(ctx):
 #Function mute
 #Mutes a member forever and DMs them.
 @bot.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(mute_members = True)
 async def mute(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
@@ -138,7 +138,7 @@ async def mute(ctx, member: discord.User, *, reason = "Not Specified"):
             await ctx.send("I was unable to mute this user.")
             return
         try:
-            await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, member, reason))
+            await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, server, reason))
         except discord.Forbidden:
             await ctx.send("I can't DM this user.")
     else:
@@ -150,7 +150,8 @@ async def nope(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("This bot requires administrator.")
+        await ctx.send("Fatal error, command terminated.")
+        await ctx.send(error)
     else:
         await ctx.send(error)
 
@@ -158,7 +159,7 @@ async def nope(ctx, error):
 #Will only unmute if user has "muterole"
 #It will still return an error if the mute role isn't present.
 @bot.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(mute_members = True)
 async def unmute(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
@@ -177,7 +178,7 @@ async def unmute(ctx, member: discord.User, *, reason = "Not Specified"):
             await ctx.send("I was unable to unmute this user.")
             return
         try:
-            await member.send("You have been unmuted by {0} in {1} for {2}.".format(moderator, member, reason))
+            await member.send("You have been unmuted by {0} in {1} for {2}.".format(moderator, server, reason))
         except discord.Forbidden:
             await ctx.send("I can't DM this user.")
     else:
@@ -189,14 +190,15 @@ async def nope(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("This bot requires administrator.")
+        await ctx.send("Fatal error, command terminated.")
+        await ctx.send(error)
     else:
         await ctx.send(error)
 #Function kickMembers
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(kick_members = True)
 async def kick(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
@@ -226,7 +228,8 @@ async def rejected(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("This bot requires administrator.")
+        await ctx.send("Fatal error, command terminated.")
+        await ctx.send(error)
     else:
         await ctx.send(error)
 
@@ -235,7 +238,7 @@ async def rejected(ctx, error):
 #Bans a member and DMs them
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @bot.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(ban_members = True)
 async def ban(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
@@ -264,7 +267,8 @@ async def rejected(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("This bot requires administrator.")
+        await ctx.send("Fatal error, command terminated.")
+        await ctx.send(error)
     else:
         await ctx.send(error)
 
