@@ -47,8 +47,10 @@ async def invite(ctx):
     await ctx.send(embed = embed)
 
 #Help list
+#Use numbers to navigate the menus
+#Defaults to ;commands 1 if no number is provided.
 @bot.command()
-async def commands(ctx, type):
+async def commands(ctx, type = "1"):
     if type == "1":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
         embed.add_field(name = ";wave", value = "Waves hello to the bot.")
@@ -72,13 +74,6 @@ async def commands(ctx, type):
     else:
         await ctx.send("Use ;commands 1 or ;commands 2 to view the help menus.")
 
-@commands.error
-async def no_good(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You must include a number after ;commands")
-    else:
-        await ctx.send(error)
-
 @bot.command()
 async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
     embed = discord.Embed(title = "Poll Created by {0}".format(ctx.message.author), description = "\n", color = 0x009933)
@@ -89,7 +84,7 @@ async def poll(ctx, option_one, option_two, option_three = None, option_four = N
         if option_four != None:
             embed.add_field(name = "4️⃣ Option Four:", value = "{0}".format(option_four), inline = False)
 
-#Inefficient, but it gets the job done. I'll make it prettier and less repetitive later.
+    #Inefficient, but it gets the job done. I'll make it prettier and less repetitive later.
     poll = await ctx.send(embed = embed)
     await poll.add_reaction("1️⃣")
     await poll.add_reaction("2️⃣")
@@ -109,7 +104,7 @@ async def denied(ctx, error):
 
 @bot.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.2\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.3\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function mute
@@ -120,8 +115,7 @@ async def mute(ctx, member: discord.User, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
         server = ctx.guild
-        #Checks for a reason
-        #If none, assigns "Not specified"
+        #Tries multiple different options
         try:
             muterole = discord.utils.get(member.guild.roles, name = "Muted")
             if muterole in member.roles:
@@ -284,4 +278,3 @@ async def sleep(ctx):
 
 
 bot.run("Hehe nothing to see here")
-
