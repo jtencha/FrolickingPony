@@ -21,11 +21,6 @@ async def on_ready():
     print("We're clear for takeoff!")
     await bot.change_presence(activity = discord.Game("Going Insane | ;commands 1"))
 
-#Chooses a random greeting
-@bot.command()
-async def wave(ctx):
-    await ctx.send(random.choice(["Hello", "Helgo 👋", ":wavezali:", "Hey!", "Helg", ":floofwave:"]))
-
 @bot.command()
 async def guetzali(ctx):
     await ctx.send(random.choice(["Guetzali Guetzali",
@@ -53,7 +48,6 @@ async def invite(ctx):
 async def commands(ctx, type = "1"):
     if type == "1":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
-        embed.add_field(name = ";wave", value = "Waves hello to the bot.")
         embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
         embed.add_field(name = ";commands [number]", value = "You know what this does", inline = False)
         embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
