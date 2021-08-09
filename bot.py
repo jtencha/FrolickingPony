@@ -103,7 +103,7 @@ async def denied(ctx, error):
 
 @client.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.3\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.5.3\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function mute
@@ -141,7 +141,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                         await member.add_roles(muterole)
                         await ctx.send("{0} has been muted for {1} hours for {2}.".format(member, popped, reason))
                         try:
-                            await member.send("You have been muted for {0} hour(s) by {0} in {1} for {2}.".format(popped, moderator, server, reason))
+                            await member.send("You have been muted for {0} hour(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
                         except discord.Forbidden:
                             await ctx.send("I can't DM this user.")
                         except discord.HTTPException:
@@ -155,7 +155,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                         await member.add_roles(muterole)
                         await ctx.send("{0} has been muted for {1} minutes for {2}.".format(member, popped, reason))
                         try:
-                            await member.send("You have been muted for {0} minute(s) by {0} in {1} for {2}.".format(popped, moderator, server, reason))
+                            await member.send("You have been muted for {0} minute(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
                         except discord.Forbidden:
                             await ctx.send("I can't DM this user.")
                         except discord.HTTPException:
