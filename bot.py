@@ -14,12 +14,19 @@ intents = discord.Intents(messages = True, guilds = True)
 
 
 client = commands.Bot(command_prefix = prefix, intents = intents)
+client.remove_command("help")
 
 #Prints output to terminal if all is well
 @client.event
 async def on_ready():
     print("We're clear for takeoff!")
-    await client.change_presence(activity = discord.Game("Going Insane | ;commands 1"))
+    await client.change_presence(activity = discord.Game("Going Insane | ;help"))
+
+#Rough draft, I'll make this better soon
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.CommandNotFound):
+        await ctx.send("Command at {0} is not recognized.".format(ctx))
 
 @client.command()
 async def guetzali(ctx):
@@ -45,28 +52,28 @@ async def invite(ctx):
 #Use numbers to navigate the menus
 #Defaults to ;commands 1 if no number is provided.
 @client.command()
-async def commands(ctx, type = "1"):
+async def help(ctx, type = "1"):
     if type == "1":
-        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
+        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;help [number] to navigate the command list.", color = 0x009933)
         embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
-        embed.add_field(name = ";commands [number]", value = "You know what this does", inline = False)
+        embed.add_field(name = ";help [number]", value = "You know what this does", inline = False)
         embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
         embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
         embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-        embed.add_field(name = "\nList 1 of 2", value = "\n\nAdministrator permissions are suggested.", inline = False)
+        embed.add_field(name = "\n\nList 1 of 2", value = "\n\nAdministrator permissions are suggested.", inline = False)
         await ctx.send(embed = embed)
     elif type == "2":
-        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;commands [number] to navigate the command list.", color = 0x009933)
+        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;help [number] to navigate the command list.", color = 0x009933)
         embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
-        embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user permanently", inline = False)
+        embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
         embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
         embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
-        embed.add_field(name = "\nList 2 of 2", value = "\n\nAdministrator permissions are required for moderation.")
+        embed.add_field(name = "\n\nList 2 of 2", value = "\n\nAdministrator permissions are required for moderation.")
         await ctx.send(embed = embed)
     else:
-        await ctx.send("Use ;commands 1 or ;commands 2 to view the help menus.")
+        await ctx.send("Use ;help 1 or ;help 2 to view the help menus.")
 
 @client.command()
 @bot_has_permissions(manage_messages = True)
@@ -103,7 +110,7 @@ async def denied(ctx, error):
 
 @client.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.5.3\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.4\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function mute
@@ -125,6 +132,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                 return
             else:
                 try:
+                    #TODO - get rid of this spaghetti crap
                     if (time == None):
                         print("No time provided.")
                         await member.add_roles(muterole)
@@ -134,7 +142,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                         except discord.Forbidden:
                             await ctx.send("I can't DM this user.")
                         except discord.HTTPException:
-                            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+                            await ctx.send("Unknown error - DM failed.")
                     elif ("h" in time):
                         popped = time.strip("h")
                         final = 60 * 60 * int(popped)
@@ -145,7 +153,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                         except discord.Forbidden:
                             await ctx.send("I can't DM this user.")
                         except discord.HTTPException:
-                            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+                            await ctx.send("Unknown error - DM failed.")
                         await asyncio.sleep(final)
                         await member.remove_roles(muterole)
                         await member.send("You have been unmuted in {0}.".format(server))
@@ -159,7 +167,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
                         except discord.Forbidden:
                             await ctx.send("I can't DM this user.")
                         except discord.HTTPException:
-                            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+                            await ctx.send("Unknown error - DM failed.")
                         await asyncio.sleep(final)
                         await member.remove_roles(muterole)
                         await member.send("You have been unmuted in {0}.".format(server))
@@ -215,7 +223,7 @@ async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
         except discord.Forbidden:
             await ctx.send("I can't DM this user.")
         except discord.HTTPException:
-            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+            await ctx.send("Unknown error - DM failed.")
     else:
         await ctx.send("You don't have permission to run this command!")
         return
@@ -252,7 +260,7 @@ async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
         except discord.Forbidden:
             await ctx.send("I can't DM this user. ")
         except discord.HTTPException:
-            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+            await ctx.send("Unknown error - DM failed.")
 
         await ctx.send("{0} has been kicked for {1}.".format(member, reason))
     else:
@@ -294,7 +302,7 @@ async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
         except discord.Forbidden:
             await ctx.send("I can't DM this user.")
         except discord.HTTPException:
-            await ctx.send("Whatever you just did, do the opposite next time. You're never supposed to get here.")
+            await ctx.send("Unknown error - DM failed.")
 
         await ctx.send("{0} has been banned for {1}.".format(member, reason))
     else:
@@ -322,6 +330,5 @@ async def sleep(ctx):
         quit()
     else:
         await ctx.send("Only the bot owner can use this command!")
-
 
 client.run("Hehe nothing to see here")
