@@ -110,7 +110,7 @@ async def denied(ctx, error):
 
 @client.command()
 async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.4\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.5\nDeveloped by: FamiliarNameMissing", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Function mute
@@ -121,67 +121,72 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
         server = ctx.guild
-        #Tries multiple different options
-        try:
-            muterole = discord.utils.get(member.guild.roles, name = "Muted")
-            if muterole in member.roles:
-                await ctx.send("This user is already muted.")
-                return
-            elif moderator == member:
-                await ctx.send("You cannot mute yourself!")
-                return
-            else:
-                try:
-                    #TODO - get rid of this spaghetti crap
-                    if (time == None):
-                        print("No time provided.")
-                        await member.add_roles(muterole)
-                        await ctx.send("{0} has been muted for {1}.".format(member, reason))
-                        try:
-                            await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, server, reason))
-                        except discord.Forbidden:
-                            await ctx.send("I can't DM this user.")
-                        except discord.HTTPException:
-                            await ctx.send("Unknown error - DM failed.")
-                    elif ("h" in time):
-                        popped = time.strip("h")
-                        final = 60 * 60 * int(popped)
-                        await member.add_roles(muterole)
-                        await ctx.send("{0} has been muted for {1} hours for {2}.".format(member, popped, reason))
-                        try:
-                            await member.send("You have been muted for {0} hour(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
-                        except discord.Forbidden:
-                            await ctx.send("I can't DM this user.")
-                        except discord.HTTPException:
-                            await ctx.send("Unknown error - DM failed.")
-                        await asyncio.sleep(final)
-                        await member.remove_roles(muterole)
-                        await member.send("You have been unmuted in {0}.".format(server))
-                    elif ("m" in time):
-                        popped = time.strip("m")
-                        final = 60 * int(popped)
-                        await member.add_roles(muterole)
-                        await ctx.send("{0} has been muted for {1} minutes for {2}.".format(member, popped, reason))
-                        try:
-                            await member.send("You have been muted for {0} minute(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
-                        except discord.Forbidden:
-                            await ctx.send("I can't DM this user.")
-                        except discord.HTTPException:
-                            await ctx.send("Unknown error - DM failed.")
-                        await asyncio.sleep(final)
-                        await member.remove_roles(muterole)
-                        await member.send("You have been unmuted in {0}.".format(server))
-                    else:
-                        await ctx.send((time) + " is not a valid length!")
-                        return
-                except ValueError:
-                    await ctx.send("An error occured. Please check to make sure you provided a valid length.")
-                    return
-        except AttributeError:
-            await ctx.send('Please configure a role named "Muted" for the bot to use.')
-        except discord.Forbidden:
-            await ctx.send("I was unable to mute this user.")
+
+        muterole = discord.utils.get(member.guild.roles, name = "Muted")
+        if not muterole:
+            muterole = await server.create_role(name = "Muted", permissions = discord.Permissions(send_messages = False, read_messages = True))
+            for channel in ctx.guild.channels:
+                locked = channel.overwrites_for(muterole)
+                locked.send_messages = False
+                await channel.set_permissions(muterole, overwrite = locked)
+
+
+        if muterole in member.roles:
+            await ctx.send("This user is already muted.")
             return
+        elif moderator == member:
+            await ctx.send("You cannot mute yourself!")
+            return
+        else:
+            try:
+                #TODO - get rid of this spaghetti crap
+                if (time == None):
+                    print("No time provided.")
+                    await member.add_roles(muterole)
+                    await ctx.send("{0} has been muted for {1}.".format(member, reason))
+                    try:
+                        await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, server, reason))
+                    except discord.Forbidden:
+                        await ctx.send("I can't DM this user.")
+                    except discord.HTTPException:
+                        await ctx.send("Unknown error - DM failed.")
+                elif ("h" in time):
+                    popped = time.strip("h")
+                    final = 60 * 60 * int(popped)
+                    await member.add_roles(muterole)
+                    await ctx.send("{0} has been muted for {1} hours for {2}.".format(member, popped, reason))
+                    try:
+                        await member.send("You have been muted for {0} hour(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
+                    except discord.Forbidden:
+                        await ctx.send("I can't DM this user.")
+                    except discord.HTTPException:
+                        await ctx.send("Unknown error - DM failed.")
+                    await asyncio.sleep(final)
+                    await member.remove_roles(muterole)
+                    await member.send("You have been unmuted in {0}.".format(server))
+                elif ("m" in time):
+                    popped = time.strip("m")
+                    final = 60 * int(popped)
+                    await member.add_roles(muterole)
+                    await ctx.send("{0} has been muted for {1} minutes for {2}.".format(member, popped, reason))
+                    try:
+                        await member.send("You have been muted for {0} minute(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
+                    except discord.Forbidden:
+                        await ctx.send("I can't DM this user.")
+                    except discord.HTTPException:
+                        await ctx.send("Unknown error - DM failed.")
+                    await asyncio.sleep(final)
+                    await member.remove_roles(muterole)
+                    await member.send("You have been unmuted in {0}.".format(server))
+                else:
+                    await ctx.send((time) + " is not a valid length!")
+                    return
+            except ValueError:
+                await ctx.send("An error occured. Please check to make sure you provided a valid length.")
+                return
+            except discord.Forbidden:
+                await ctx.send("I was unable to mute this user.")
+                return
     else:
         await ctx.send("You don't have permission to run this command!")
         return
