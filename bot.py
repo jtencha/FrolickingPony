@@ -65,7 +65,7 @@ async def help(ctx, type = "1"):
         await ctx.send(embed = embed)
     elif type == "2":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;help [number] to navigate the command list.", color = 0x009933)
-        embed.add_field(name = ";about", value = "About RoboticPony", inline = False)
+        embed.add_field(name = ";about", value = "Get info about a user", inline = False)
         embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
         embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
@@ -110,9 +110,22 @@ async def denied(ctx, error):
         await ctx.send(error)
 
 @client.command()
-async def about(ctx):
-    embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.5\nDeveloped by: FamiliarNameMissing", color = 0x009933)
+async def about(ctx, member: discord.Member):
+    embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0x009933)
+    embed.add_field(name = "Name:", value = member.name, inline = True)
+    embed.add_field(name = "User ID:", value = member.id, inline = True)
+    embed.add_field(name = "Highest Role:", value = member.top_role)
+    embed.add_field(name = "Joined Server:", value = member.joined_at)
+    embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed = embed)
+
+@about.error
+async def incorrect(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.6\nDeveloped by: FamiliarNameMissing and discord.py", color = 0x009933)
+        await ctx.send(embed = embed)
+    else:
+        await ctx.send(error)
 
 #Function mute
 #Mutes a member forever and DMs them.
