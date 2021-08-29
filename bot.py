@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions
 from discord import Member
+from secret import token
 import os
 import asyncio
 import random
@@ -336,4 +337,4 @@ async def sleep(ctx):
     else:
         await ctx.send("Only the bot owner can use this command!")
 
-client.run("Hehe nothing to see here")
+client.run(token)
