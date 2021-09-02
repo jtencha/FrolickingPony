@@ -24,10 +24,10 @@ async def on_ready():
     await client.change_presence(activity = discord.Game("Going Insane | ;help"))
 
 #Rough draft, I'll make this better soon
-@client.event
-async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.CommandNotFound):
-        await ctx.send("Command at {0} is not recognized.".format(ctx))
+#@client.event
+#async def on_command_error(ctx, error, message):
+    #if isinstance(error, discord.ext.commands.CommandNotFound):
+        #await ctx.send("Command at {0} is not recognized.".format(message))
 
 @client.command()
 async def guetzali(ctx):
@@ -55,26 +55,20 @@ async def invite(ctx):
 @client.command()
 async def help(ctx, type = "1"):
     if type == "1":
-        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;help [number] to navigate the command list.", color = 0x009933)
+        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions.\n\n", color = 0x009933)
         embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
-        embed.add_field(name = ";help [number]", value = "You know what this does", inline = False)
+        embed.add_field(name = ";help", value = "General overview of commands", inline = False)
         embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
         embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
         embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-        embed.add_field(name = "\n\nList 1 of 2", value = "\n\nAdministrator permissions are suggested.", inline = False)
-        await ctx.send(embed = embed)
-    elif type == "2":
-        embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions \n\nUse ;help [number] to navigate the command list.", color = 0x009933)
-        embed.add_field(name = ";about", value = "Get info about a user", inline = False)
+        embed.add_field(name = ";about [user]", value = "Get info about a user", inline = False)
         embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
         embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
         embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
-        embed.add_field(name = "\n\nList 2 of 2", value = "\n\nAdministrator permissions are required for moderation.")
+        embed.add_field(name = "\n\nList 1 of 1", value = "\n\nAdministrator permissions are required for moderation.")
         await ctx.send(embed = embed)
-    else:
-        await ctx.send("Use ;help 1 or ;help 2 to view the help menus.")
 
 @client.command()
 @bot_has_permissions(manage_messages = True)
