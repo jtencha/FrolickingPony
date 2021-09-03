@@ -69,6 +69,8 @@ async def help(ctx, type = "1"):
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
         embed.add_field(name = "\n\nList 1 of 1", value = "\n\nAdministrator permissions are required for moderation.")
         await ctx.send(embed = embed)
+    else:
+        await ctx.send("Invalid command.")
 
 @client.command()
 @bot_has_permissions(manage_messages = True)
