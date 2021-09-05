@@ -77,8 +77,19 @@ class Functions(commands.Cog):
         @about.error
         async def incorrect(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.7.2\nDeveloped by: FamiliarNameMissing and discord.py", color = 0x009933)
-                await ctx.send(embed = embed)
+                await ctx.send("You did not include a user!")
+            else:
+                await ctx.send("`{0}`".format(error))
+
+        @bot.command()
+        async def eightball(ctx, question):
+            choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so"]
+            await ctx.send(random.choice(choices))
+
+        @eightball.error
+        async def bad(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You need to ask me something...")
             else:
                 await ctx.send("`{0}`".format(error))
 

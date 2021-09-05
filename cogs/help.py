@@ -18,9 +18,10 @@ class Help(commands.Cog):
         async def help(ctx, type = "1"):
             if type == "1":
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
-                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll`", inline = False)
-                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `sleep`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.1\nDeveloped by: FamiliarNameMissing and discord.py")
+                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball`", inline = False)
+                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban`", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` `reset`", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
                 embed = discord.Embed(title = "about", description = "Get information about a user.", color = 0x009933)
@@ -80,6 +81,16 @@ class Help(commands.Cog):
             elif type == "sleep":
                 embed = discord.Embed(title = "sleep", description = "Goodnight, RoboticPony.", color = 0x009933)
                 embed.add_field(name = "Format:", value = "`sleep`")
+                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "reset":
+                embed = discord.Embed(title = "reset", description = "Reset the bot.", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`reset`")
+                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "eightball":
+                embed = discord.Embed(title = "eightball", description = "Virtual eightball", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`eightball [question]`")
                 embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
                 await ctx.send(embed = embed)
             else:

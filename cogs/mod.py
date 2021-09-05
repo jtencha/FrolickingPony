@@ -204,8 +204,12 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send("You don't have permission to run this command!")
 
-        @bot.event
-        async def on_command_error(ctx, error):
+        @kick.error
+        @ban.error
+        @mute.error
+        @unmute.error
+        @unban.error
+        async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")
             else:
