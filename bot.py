@@ -67,7 +67,7 @@ async def help(ctx, type = "1"):
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
         embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
-        embed.add_field(name = "\n\nList 1 of 1", value = "\n\nAdministrator permissions are required for moderation.")
+        embed.add_field(name = "\n\nList 1 of 1", value = "\n\nAdministrator permissions are recommended for moderation.")
         await ctx.send(embed = embed)
     else:
         await ctx.send("Invalid command.")
@@ -127,7 +127,7 @@ async def incorrect(ctx, error):
 #Function mute
 #Mutes a member forever and DMs them.
 @client.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(mute_members = True)
 async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
@@ -207,7 +207,7 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
 #Will only unmute if user has "muterole"
 #It will still return an error if the mute role isn't present.
 @client.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(manage_messages = True)
 async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
@@ -239,7 +239,7 @@ async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @client.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(ban_members = True)
 async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.kick_members:
         moderator = ctx.message.author
@@ -270,7 +270,7 @@ async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
 #Bans a member and DMs them
 #Returns if the targeted user is too powerful or the bot lacks perms.
 @client.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(ban_members = True)
 async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.ban_members:
         moderator = ctx.message.author
