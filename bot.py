@@ -46,7 +46,7 @@ async def ping(ctx):
 #Invite command
 @client.command()
 async def invite(ctx):
-    embed = discord.Embed(title = "Invite RoboticPony", url = "https://discord.com/oauth2/authorize?client_id=834799912507277312&permissions=8&scope=bot", description = "Invite the bot with the link above!", color = 0x009933)
+    embed = discord.Embed(title = "Invite RoboticPony", url = "https://discord.com/oauth2/authorize?client_id=834799912507277312&permissions=243165293686&scope=bot", description = "Invite the bot with the link above!", color = 0x009933)
     await ctx.send(embed = embed)
 
 #Help list
