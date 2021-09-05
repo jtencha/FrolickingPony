@@ -40,9 +40,26 @@ async def sleep(ctx):
     else:
         await ctx.send("Only the bot owner can use this command!")
 
+@bot.command()
+async def reset(ctx):
+    owner_id = "687081333876719740"
+    if str(ctx.message.author.id) == str(owner_id):
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                bot.unload_extension("cogs.{0}".format(filename[:-3]))
+                bot.load_extension("cogs.{0}".format(filename[:-3]))
+        await ctx.send("Successfully reset the bot.")
+    else:
+        await ctx.send("Only the bot owner can use this command!")
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    await ctx.send("`{0}`".format(error))
+
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension("cogs.{0}".format(filename[:-3]))
-        
+
 print("Second stage clear")
 bot.run(token)
