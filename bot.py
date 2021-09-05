@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions
+from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
 from discord import Member
 from secret import token
 import os
@@ -56,12 +56,12 @@ async def invite(ctx):
 async def help(ctx, type = "1"):
     if type == "1":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions.\n\n", color = 0x009933)
+        embed.add_field(name = ";about [user]", value = "Get info about a user", inline = False)
         embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
         embed.add_field(name = ";help", value = "General overview of commands", inline = False)
         embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
         embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
         embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-        embed.add_field(name = ";about [user]", value = "Get info about a user", inline = False)
         embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
         embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
         embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
@@ -111,6 +111,7 @@ async def about(ctx, member: discord.Member):
     embed.add_field(name = "Name:", value = member.name, inline = True)
     embed.add_field(name = "User ID:", value = member.id, inline = True)
     embed.add_field(name = "Highest Role:", value = member.top_role)
+    embed.add_field(name = "Created Account:", value = member.created_at)
     embed.add_field(name = "Joined Server:", value = member.joined_at)
     embed.set_thumbnail(url = member.avatar_url)
     await ctx.send(embed = embed)
@@ -118,7 +119,7 @@ async def about(ctx, member: discord.Member):
 @about.error
 async def incorrect(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.6\nDeveloped by: FamiliarNameMissing and discord.py", color = 0x009933)
+        embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.6.1\nDeveloped by: FamiliarNameMissing and discord.py", color = 0x009933)
         await ctx.send(embed = embed)
     else:
         await ctx.send(error)
@@ -201,15 +202,6 @@ async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specif
         await ctx.send("You don't have permission to run this command!")
         return
 
-@mute.error
-async def nope(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You did not include a user!")
-    elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, command terminated.")
-        await ctx.send(error)
-    else:
-        await ctx.send(error)
 
 #function unMute
 #Will only unmute if user has "muterole"
@@ -243,15 +235,6 @@ async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
         await ctx.send("You don't have permission to run this command!")
         return
 
-@unmute.error
-async def nope(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You did not include a user!")
-    elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, command terminated.")
-        await ctx.send(error)
-    else:
-        await ctx.send(error)
 #Function kickMembers
 #Kicks a member and DMs them.
 #Returns if the targeted user is too powerful or the bot lacks perms.
@@ -281,17 +264,6 @@ async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
     else:
         await ctx.send("You don't have permission to run this command!")
         return
-
-#Check for garbage
-@kick.error
-async def rejected(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You did not include a user!")
-    elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, command terminated.")
-        await ctx.send(error)
-    else:
-        await ctx.send(error)
 
 
 #function banMembers
@@ -323,17 +295,35 @@ async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
     else:
         await ctx.send("You don't have permission to run this command!")
 
-#Check for garbage
-@ban.error
-async def rejected(ctx, error):
+'''
+@client.command()
+@bot_has_permissions(administrator = True)
+@guild_only()
+async def unban(ctx, id):
+    if ctx.message.author.guild_permissions.ban_members:
+        userid = await client.fetch_user(id)
+        await ctx.guild.unban(userid)
+        await ctx.send(userid + " has been unbanned by {0}.".format(ctx.message.author))
+    else:
+        await ctx.send("You don't have permission to run this command!")
+
+
+@unban.error
+async def fail(ctx, error):
+    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+        await ctx.send("You did not include a user!")
+    else:
+        await ctx.send(error)
+'''
+
+@client.event
+async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You did not include a user!")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, command terminated.")
         await ctx.send(error)
     else:
         await ctx.send(error)
-
 
 #Secret command wo
 @client.command()
