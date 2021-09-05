@@ -127,7 +127,7 @@ async def incorrect(ctx, error):
 #Function mute
 #Mutes a member forever and DMs them.
 @client.command()
-@bot_has_permissions(mute_members = True)
+@bot_has_permissions(manage_members = True)
 async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specified"):
     if ctx.message.author.guild_permissions.mute_members:
         moderator = ctx.message.author
