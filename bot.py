@@ -23,12 +23,6 @@ async def on_ready():
     print("We're clear for takeoff!")
     await bot.change_presence(activity = discord.Game("Going Insane | ;help"))
 
-#Rough draft, I'll make this better soon
-#@client.event
-#async def on_command_error(ctx, error, message):
-    #if isinstance(error, discord.ext.commands.CommandNotFound):
-        #await ctx.send("Command at {0} is not recognized.".format(message))
-
 #Secret command wo
 @bot.command()
 async def sleep(ctx):
@@ -53,7 +47,8 @@ async def reset(ctx):
         await ctx.send("Only the bot owner can use this command!")
 
 
-@bot.event
+@reset.error
+@sleep.error
 async def on_command_error(ctx, error):
     await ctx.send("`{0}`".format(error))
 
