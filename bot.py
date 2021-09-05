@@ -56,16 +56,16 @@ async def invite(ctx):
 async def help(ctx, type = "1"):
     if type == "1":
         embed = discord.Embed(title = "Avalible Commands:", description = "Commands marked with an * require permissions.\n\n", color = 0x009933)
-        embed.add_field(name = ";about [user]", value = "Get info about a user", inline = False)
-        embed.add_field(name = ";guetzali", value = "Guetzali moment", inline = False)
-        embed.add_field(name = ";help", value = "General overview of commands", inline = False)
-        embed.add_field(name = ";invite", value = "Invite RoboticPony", inline = False)
-        embed.add_field(name = ";ping", value = "Bot response time.", inline = False)
-        embed.add_field(name = ";poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
-        embed.add_field(name = ";mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
-        embed.add_field(name = ";unmute [user] [reason]*", value = "Unmute a user", inline = False)
-        embed.add_field(name = ";kick [user] [reason]*", value = "Kicks a member.", inline = False)
-        embed.add_field(name = ";ban [user] [reason]*", value = "Bans a member.", inline = False)
+        embed.add_field(name = "about [user]", value = "Get info about a user", inline = False)
+        embed.add_field(name = "guetzali", value = "Guetzali moment", inline = False)
+        embed.add_field(name = "help", value = "General overview of commands", inline = False)
+        embed.add_field(name = "invite", value = "Invite RoboticPony", inline = False)
+        embed.add_field(name = "ping", value = "Bot response time.", inline = False)
+        embed.add_field(name = "poll [option] [option] [option] [option]", value = "Create a poll", inline = False)
+        embed.add_field(name = "mute [user] [time] [reason]*", value = "Mute a user for a set time", inline = False)
+        embed.add_field(name = "unmute [user] [reason]*", value = "Unmute a user", inline = False)
+        embed.add_field(name = "kick [user] [reason]*", value = "Kicks a member.", inline = False)
+        embed.add_field(name = "ban [user] [reason]*", value = "Bans a member.", inline = False)
         embed.add_field(name = "Secret Command*", value = "Puts the bot to sleep.", inline = False)
         embed.add_field(name = "\n\nList 1 of 1", value = "\n\nAdministrator permissions are recommended for moderation.")
         await ctx.send(embed = embed)
@@ -99,11 +99,6 @@ async def poll(ctx, option_one, option_two, option_three = None, option_four = N
 async def denied(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         await ctx.send("You must include at least two choices!")
-    elif isinstance(error, BotMissingPermissions):
-        await ctx.send("Fatal error, command terminated.")
-        await ctx.send(error)
-    else:
-        await ctx.send(error)
 
 @client.command()
 async def about(ctx, member: discord.Member):
@@ -121,8 +116,6 @@ async def incorrect(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
         embed = discord.Embed(title = "About RoboticPony", description = "Version: 1.4.6.1\nDeveloped by: FamiliarNameMissing and discord.py", color = 0x009933)
         await ctx.send(embed = embed)
-    else:
-        await ctx.send(error)
 
 #Function mute
 #Mutes a member forever and DMs them.
@@ -295,9 +288,9 @@ async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
     else:
         await ctx.send("You don't have permission to run this command!")
 
-'''
+
 @client.command()
-@bot_has_permissions(administrator = True)
+@bot_has_permissions(ban_members = True)
 @guild_only()
 async def unban(ctx, id):
     if ctx.message.author.guild_permissions.ban_members:
@@ -308,22 +301,14 @@ async def unban(ctx, id):
         await ctx.send("You don't have permission to run this command!")
 
 
-@unban.error
-async def fail(ctx, error):
-    if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You did not include a user!")
-    else:
-        await ctx.send(error)
-'''
-
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-        await ctx.send("You did not include a user!")
+        await ctx.send("`You did not include a user!`")
     elif isinstance(error, BotMissingPermissions):
-        await ctx.send(error)
+        await ctx.send("`{0}`".format(error))
     else:
-        await ctx.send(error)
+        await ctx.send("`{0}`".format(error))
 
 #Secret command wo
 @client.command()
