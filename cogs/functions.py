@@ -113,8 +113,5 @@ class Functions(commands.Cog):
             else:
                 await ctx.send("`{0}`".format(error))
 
-        def setup(bot):
-            bot.add_cog(Funcions(bot))
-
 def setup(bot):
     bot.add_cog(Functions(bot))
