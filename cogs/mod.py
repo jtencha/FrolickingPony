@@ -11,7 +11,6 @@ class ModCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
         @bot.command()
         @bot_has_permissions(manage_messages = True)
         async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specified"):
@@ -88,6 +87,18 @@ class ModCommands(commands.Cog):
                 await ctx.send("You don't have permission to run this command!")
                 return
 
+
+        #Check that mute works every time a channel is created
+        @bot.event
+        async def on_guild_channel_create(ctx):
+            server = ctx.guild
+            muterole = discord.utils.get(server.roles, name = "Muted")
+            if not muterole:
+                muterole = await server.create_role(name = "Muted", permissions = discord.Permissions(send_messages = False, read_messages = True))
+            for channel in ctx.guild.channels:
+                locked = channel.overwrites_for(muterole)
+                locked.send_messages = False
+                await channel.set_permissions(muterole, overwrite = locked)
 
         #function unMute
         #Will only unmute if user has "muterole"
@@ -189,9 +200,16 @@ class ModCommands(commands.Cog):
             if ctx.message.author.guild_permissions.ban_members:
                 userid = await bot.fetch_user(id)
                 await ctx.guild.unban(userid)
-                await ctx.send(userid + " has been unbanned by {0}.".format(ctx.message.author))
+                await ctx.send("{0} has been unbanned by {0}.".format(userid, ctx.message.author))
             else:
                 await ctx.send("You don't have permission to run this command!")
+
+        @bot.event
+        async def on_command_error(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You did not include a user!")
+            else:
+                await ctx.send("`{0}`".format(error))
 
 def setup(bot):
     bot.add_cog(ModCommands(bot))
