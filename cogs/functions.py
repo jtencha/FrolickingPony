@@ -92,6 +92,20 @@ class Functions(commands.Cog):
                 await ctx.send("You need to ask me something...")
             else:
                 await ctx.send("`{0}`".format(error))
+        
+        @bot.command()
+        async def embed(ctx, message):
+            embed = discord.Embed(title = "{0}".format(ctx.message.author), description = message, color = 0x009933)
+            embed.set_thumbnail(url = ctx.message.author.avatar_url)
+            await ctx.message.delete()
+            await ctx.send(embed = embed)
+
+        @embed.error
+        async def fail(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You need to give me something to embed!")
+            else:
+                await ctx.send("`{0}`".format(error))
 
 def setup(bot):
     bot.add_cog(Functions(bot))
