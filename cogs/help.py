@@ -95,7 +95,7 @@ class Help(commands.Cog):
                 await ctx.send(embed = embed)
             elif type == "embed":
                 embed = discord.Embed(title = "embed", description = "Epic embed fail", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`embed [message]`")
+                embed.add_field(name = "Format:", value = "`embed [title] [message]`")
                 embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
                 await ctx.send(embed = embed)
             else:
