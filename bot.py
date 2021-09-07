@@ -46,9 +46,32 @@ async def reset(ctx):
     else:
         await ctx.send("Only the bot owner can use this command!")
 
+@bot.command()
+async def unpack(ctx):
+    owner_id = "687081333876719740"
+    if str(ctx.message.author.id) == str(owner_id):
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                bot.load_extension("cogs.{0}".format(filename[:-3]))
+        await ctx.send("All extensions have been loaded.")
+    else:
+        await ctx.send("Only the bot owner can use this command!")
+
+@bot.command()
+async def pack(ctx):
+    owner_id = "687081333876719740"
+    if str(ctx.message.author.id) == str(owner_id):
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                bot.unload_extension("cogs.{0}".format(filename[:-3]))
+        await ctx.send("All extensions have been packed up.")
+    else:
+        await ctx.send("Only the bot owner can use this command!")
 
 @reset.error
 @sleep.error
+@unpack.error
+@pack.error
 async def on_command_error(ctx, error):
     await ctx.send("`{0}`".format(error))
 

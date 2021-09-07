@@ -20,7 +20,7 @@ class Help(commands.Cog):
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
                 embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` `reset`", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
@@ -96,6 +96,16 @@ class Help(commands.Cog):
             elif type == "embed":
                 embed = discord.Embed(title = "embed", description = "Epic embed fail", color = 0x009933)
                 embed.add_field(name = "Format:", value = "`embed [title] [message]`")
+                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "unpack":
+                embed = discord.Embed(title = "unpack", description = "Manually unpack cogs", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`unpack`")
+                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "pack":
+                embed = discord.Embed(title = "pack", description = "Manually pack away cogs", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`pack`")
                 embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
                 await ctx.send(embed = embed)
             else:
