@@ -204,6 +204,22 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send("You don't have permission to run this command!")
 
+        @bot.command()
+        @bot_has_permissions(manage_nicknames = True)
+        async def nickname(ctx, member: discord.Member, *, nickname):
+            if ctx.message.author.guild_permissions.manage_nicknames:
+                await member.edit(nick = nickname)
+                await ctx.send("{0}'s name has been changed to {1} by {2}.".format(member, nickname, ctx.message.author))
+            else:
+                await ctx.send("You don't have permission to run this command!")
+
+        @nickname.error
+        async def fail(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You did not include a user and/or nickname!")
+            else:
+                await ctx.send("`{0}`".format(error))
+
         @kick.error
         @ban.error
         @mute.error

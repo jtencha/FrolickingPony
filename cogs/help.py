@@ -19,7 +19,7 @@ class Help(commands.Cog):
             if type == "1":
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
                 embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
-                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban`", inline = False)
+                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nickname`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
@@ -107,6 +107,11 @@ class Help(commands.Cog):
                 embed = discord.Embed(title = "pack", description = "Manually pack away cogs", color = 0x009933)
                 embed.add_field(name = "Format:", value = "`pack`")
                 embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "nickname":
+                embed = discord.Embed(title = "nickname", description = "Change a user's nickname", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`nickname [user] [nickname]`")
+                embed.add_field(name = "Permissions Required:", value = "Manage nicknames", inline = True)
                 await ctx.send(embed = embed)
             else:
                 await ctx.send("`Invalid command.`")
