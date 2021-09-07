@@ -18,7 +18,7 @@ class Help(commands.Cog):
         async def help(ctx, type = "1"):
             if type == "1":
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
-                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball`", inline = False)
+                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset`", inline = False)
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
@@ -91,6 +91,11 @@ class Help(commands.Cog):
             elif type == "eightball":
                 embed = discord.Embed(title = "eightball", description = "Virtual eightball", color = 0x009933)
                 embed.add_field(name = "Format:", value = "`eightball [question]`")
+                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = embed)
+            elif type == "embed":
+                embed = discord.Embed(title = "embed", description = "Epic embed fail", color = 0x009933)
+                embed.add_field(name = "Format:", value = "`embed [title] [message]`")
                 embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
                 await ctx.send(embed = embed)
             else:

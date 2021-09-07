@@ -20,7 +20,7 @@ class ModCommands(commands.Cog):
 
                 muterole = discord.utils.get(member.guild.roles, name = "Muted")
                 if not muterole:
-                    muterole = await server.create_role(name = "Muted", permissions = discord.Permissions(send_messages = False, read_messages = True))
+                    muterole = await server.create_role(name = "Muted", permissions = discord.Permissions(send_messages = False, read_messages = True), color = 0x555353)
                     for channel in ctx.guild.channels:
                         locked = channel.overwrites_for(muterole)
                         locked.send_messages = False

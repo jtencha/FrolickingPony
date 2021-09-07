@@ -17,7 +17,8 @@ class Functions(commands.Cog):
             "https://media.discordapp.net/attachments/842447676414361620/843713059033710632/60a1f6f95aa22378467759.gif",
             "https://media.discordapp.net/attachments/404803931227553802/860570669322469377/quetzali.gif",
             "https://media.discordapp.net/attachments/863137688470814741/863936864054149140/makesweet-kxksih.gif",
-            "https://media.discordapp.net/attachments/404803931227553802/859942873864994816/697995591921172532-8.gif"
+            "https://media.discordapp.net/attachments/404803931227553802/859942873864994816/697995591921172532-8.gif",
+            "https/media.discordapp.net/attachments/404803931227553802/860570540996427836/4babe53e-cbe3-4ca7-a40a-60a9bcf4fd9d.gif",
             ]))
 
         #Bot response time
@@ -90,6 +91,20 @@ class Functions(commands.Cog):
         async def bad(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You need to ask me something...")
+            else:
+                await ctx.send("`{0}`".format(error))
+        
+        @bot.command()
+        async def embed(ctx, title, *, message):
+            embed = discord.Embed(title = title, description = message, color = 0x009933)
+            embed.set_author(name = "{0}".format(ctx.message.author), icon_url = ctx.message.author.avatar_url)
+            await ctx.message.delete()
+            await ctx.send(embed = embed)
+
+        @embed.error
+        async def fail(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You need to give me something to embed!")
             else:
                 await ctx.send("`{0}`".format(error))
 
