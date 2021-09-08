@@ -8,7 +8,7 @@ import asyncio
 import random
 
 #Prefix can be changed here
-prefix = ";"
+prefix = "?"
 
 intents = discord.Intents.default()
 intents = discord.Intents(messages = True, guilds = True)
