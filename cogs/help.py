@@ -11,6 +11,11 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        def help_template(command_name, desc, format, perms_req):
+            embed = discord.Embed(title = command_name, description = desc, color = 0x009933)
+            embed.add_field(name = "Format:", value = format)
+            embed.add_field(name = "Permissions Required:", value = perms_req, inline = True)
+            return embed
         #Help list
         #Use numbers to navigate the menus
         #Defaults to ;commands 1 if no number is provided.
@@ -24,95 +29,44 @@ class Help(commands.Cog):
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
-                embed = discord.Embed(title = "about", description = "Get information about a user.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`about [user]`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                #embed = discord.Embed(title = "about", description = "Get information about a user.", color = 0x009933)
+                #embed.add_field(name = "Format:", value = "`about [user]`")
+                #embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
+                await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
             elif type == "guetzali":
-                embed = discord.Embed(title = "guetzali", description = "Guetzali Guetzali", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`guetzali`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("guetzali", "Guetzali Guetzali", "`guetzali`", "Send messages"))
             elif type == "help":
-                embed = discord.Embed(title = "help", description = "Display an overview of commands.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`help (command)`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("help", "Display an overview of commands.", "`help (command)`", "Send messages"))
             elif type == "invite":
-                embed = discord.Embed(title = "invite", description = "Display link to invite the bot.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`invite`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("invite", "Display a link to invite the bot.", "`invite`", "Send messages"))
             elif type == "ping":
-                embed = discord.Embed(title = "ping", description = "Get the bot repsonse time.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`ping`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("ping", "Bot repsonse time", "`ping`", "Send messages"))
             elif type == "poll":
-                embed = discord.Embed(title = "poll", description = "Create a poll.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`poll [option] [option] (option) (option)`")
-                embed.add_field(name = "Permissions Required:", value = "Manage messages, add reactions", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("poll", "Create a poll.", "`poll [option] [option] (option) (option)`", "Manage messages, add reactions"))
             elif type == "mute":
-                embed = discord.Embed(title = "mute", description = "Mute a user for a set amount of time.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`mute [user] (time) (reason)`")
-                embed.add_field(name = "Permissions Required:", value = "Manage members, manage roles", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("mute", "Mute a user for a set time.", "`mute [user] (time) (reason)`", "Manage members, manage roles"))
             elif type == "unmute":
-                embed = discord.Embed(title = "unmute", description = "Unmute a user.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`unmute [user] (reason)`")
-                embed.add_field(name = "Permissions Required:", value = "Manage members, manage roles", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("unmute", "Unmute a user", "`unmute [user] (reason)`", "Manage members, manage roles"))
             elif type == "kick":
-                embed = discord.Embed(title = "kick", description = "Kick a user.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`kick [user] (reason)`")
-                embed.add_field(name = "Permissions Required:", value = "Ban members", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("kick", "Kick a user", "`kick [user] (reason)`", "Kick members"))
             elif type == "ban":
-                embed = discord.Embed(title = "ban", description = "Ban a user.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`ban [user] (reason)`")
-                embed.add_field(name = "Permissions Required:", value = "Ban members", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("ban", "Ban a user", "`ban [user] (reason)`", "Ban members"))
             elif type == "unban":
-                embed = discord.Embed(title = "unban", description = "Unban a user (and return some errors while you're at it)", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`unban [user]`")
-                embed.add_field(name = "Permissions Required:", value = "Ban members", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("unban", "Unban a user (and return some errors while you're at it)", "`unban [user]`", "Ban members"))
             elif type == "sleep":
-                embed = discord.Embed(title = "sleep", description = "Goodnight, RoboticPony.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`sleep`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("sleep", "Sleep well, RoboticPony", "`sleep`", "Send messages (owner only)"))
             elif type == "reset":
-                embed = discord.Embed(title = "reset", description = "Reset the bot.", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`reset`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("reset", "Reset the bot.", "`reset`", "Send messages (owner only)"))
             elif type == "eightball":
-                embed = discord.Embed(title = "eightball", description = "Virtual eightball", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`eightball [question]`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("eightball", "Virtual eightball", "`eightball`", "Send messages"))
             elif type == "embed":
-                embed = discord.Embed(title = "embed", description = "Epic embed fail", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`embed [title] [message]`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("embed", "Epic embed fail", "`embed [title] [message]`", "Send messages"))
             elif type == "unpack":
-                embed = discord.Embed(title = "unpack", description = "Manually unpack cogs", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`unpack`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("unpack", "Manually unpack cogs", "`unpack`", "Send messages (owner only)"))
             elif type == "pack":
-                embed = discord.Embed(title = "pack", description = "Manually pack away cogs", color = 0x009933)
-                embed.add_field(name = "Format:", value = "`pack`")
-                embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("pack", "Manually pack away all cogs", "`pack`", "Send messages (owner only)"))
             elif type == "nick":
-                embed = discord.Embed(title = "nick", description = "Change a user's nickname", color = 0x009933)
-                embed.add_field(name = "Format (leave nickname blank to reset):", value = "`nickname [user] (nickname)`")
-                embed.add_field(name = "Permissions Required:", value = "Manage nicknames", inline = True)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = help_template("nick", "Change a user's nickname - leave blank to reset.", "`nickname [user] (nickname)", "Manage nicknames"))
             else:
                 await ctx.send("`Invalid command.`")
 
