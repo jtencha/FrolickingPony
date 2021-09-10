@@ -220,12 +220,68 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send("You don't have permission to run this command!")
         
+        @bot.command()
+        @bot_has_permissions(manage_nicknames = True, manage_roles = True)
+        async def setnick(ctx, member: discord.Member, time, *, nickname):
+          if ctx.message.author.guild_permissions.manage_nicknames:
+              locknick = discord.utils.get(member.guild.roles, name = "Nickname Banned")
+              moderator = ctx.message.author
+              server = ctx.guild
+              if not locknick:
+                  locknick = await server.create_role(name = "Nickname Banned", permissions = discord.Permissions(change_nickname = False, read_messages = True), color = 0x555353)
+                  for channel in ctx.guild.channels:
+                      locked = channel.overwrites_for(locknick)
+                      locked.change_nickname = False
+                      await channel.set_permissions(locknick, overwrite = locked)
+
+
+              if locknick in member.roles:
+                    await ctx.send("This user is already locked.")
+                    return
+              elif moderator == member:
+                    await ctx.send("I don't think you want to do this...")
+                    return
+                
+              if ("h" in time):
+                  popped = time.strip("h")
+                  if int(popped) > 23:
+                      await ctx.send("Use d to set days")
+                      return
+                  final = 60 * 60 * int(popped)
+                  await member.add_roles(locknick)
+                  await member.edit(nick = nickname)
+                  await ctx.send("{0}'s named has been locked for {1} hours.".format(member, popped))
+                  await asyncio.sleep(final)
+                  await member.remove_roles(locknick)
+                  try:
+                      await member.send("Your nickname in {0} is now unlocked.".format(server))
+                  except:
+                      print("fail")
+              elif ("d" in time):
+                  popped = time.strip("d")
+                  if int(popped) > 365:
+                      await ctx.send("You can only setnicks for a year, at most.")
+                  final = 60 * 60 * int(popped) * 24
+                  await member.add_roles(locknick)
+                  await member.set_nick(nick = nickname)
+                  await ctx.send("{0}'s named has been locked for {1} days.".format(member, popped))
+                  await asyncio.sleep(final)
+                  await member.remove_roles(locknick)
+                  try:
+                      await member.send("Your nickname in {0} is now unlocked.".format(server))
+                  except:
+                      print("fail")
+          else:
+            await ctx.send("You don't have permission to run this command!")
+            return
+                
         @kick.error
         @ban.error
         @mute.error
         @unmute.error
         @unban.error
         @nick.error
+        @setnick.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")

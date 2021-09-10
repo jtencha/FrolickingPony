@@ -24,7 +24,7 @@ class Help(commands.Cog):
             if type == "1":
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
                 embed.add_field(name = "Commands: ", value = "`about` `guetzali` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
-                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick`", inline = False)
+                embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick` `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.4.7.3\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
@@ -66,7 +66,9 @@ class Help(commands.Cog):
             elif type == "pack":
                 await ctx.send(embed = help_template("pack", "Manually pack away all cogs", "`pack`", "Send messages (owner only)"))
             elif type == "nick":
-                await ctx.send(embed = help_template("nick", "Change a user's nickname - leave blank to reset.", "`nickname [user] (nickname)", "Manage nicknames"))
+                await ctx.send(embed = help_template("nick", "Change a user's nickname - leave blank to reset (reset works for setnick as well).", "`nickname [user] (nickname)", "Manage nicknames"))
+            elif type == "setnick":
+                await ctx.send(embed = help_template("setnick", "Change a user's nickname for a set time and stop them from changing it.", "`setnick [user] [time] [nickname]`", "Manage nicknames, manage roles"))
             else:
                 await ctx.send("`Invalid command.`")
 

@@ -21,7 +21,7 @@ bot.remove_command("help")
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
-    await bot.change_presence(activity = discord.Game("Going Insane | ;help"))
+    await bot.change_presence(activity = discord.Game("Going Insane | ?help"))
 
 #Secret command wo
 @bot.command()
