@@ -233,6 +233,7 @@ class ModCommands(commands.Cog):
                       locked = channel.overwrites_for(locknick)
                       locked.change_nickname = False
                       await channel.set_permissions(locknick, overwrite = locked)
+                  await ctx.send("Role has configured. Pleas re-run the most recent comamnd.")
 
 
               if locknick in member.roles:
@@ -241,47 +242,56 @@ class ModCommands(commands.Cog):
               elif moderator == member:
                     await ctx.send("I don't think you want to do this...")
                     return
-                
-              if ("h" in time):
-                  popped = time.strip("h")
-                  if int(popped) > 23:
-                      await ctx.send("Use d to set days")
-                      return
-                  final = 60 * 60 * int(popped)
-                  await member.add_roles(locknick)
-                  await member.edit(nick = nickname)
-                  await ctx.send("{0}'s named has been locked for {1} hours.".format(member, popped))
-                  await asyncio.sleep(final)
-                  await member.remove_roles(locknick)
-                  try:
-                      await member.send("Your nickname in {0} is now unlocked.".format(server))
-                  except:
-                      print("fail")
-              elif ("d" in time):
-                  popped = time.strip("d")
-                  if int(popped) > 365:
-                      await ctx.send("You can only setnicks for a year, at most.")
-                  final = 60 * 60 * int(popped) * 24
-                  await member.add_roles(locknick)
-                  await member.set_nick(nick = nickname)
-                  await ctx.send("{0}'s named has been locked for {1} days.".format(member, popped))
-                  await asyncio.sleep(final)
-                  await member.remove_roles(locknick)
-                  try:
-                      await member.send("Your nickname in {0} is now unlocked.".format(server))
-                  except:
-                      print("fail")
+              try:
+                  if ("h" in time):
+                      popped = time.strip("h")
+                      if int(popped) > 23:
+                          await ctx.send("Use d to set days")
+                          return
+                      final = 60 * 60 * int(popped)
+                      await member.add_roles(locknick)
+                      await member.edit(nick = nickname)
+                      await ctx.send("{0}'s named has been locked for {1} hours.".format(member, popped))
+                      await asyncio.sleep(final)
+                      await member.remove_roles(locknick)
+                      try:
+                          await member.send("Your nickname in {0} is now unlocked.".format(server))
+                      except:
+                          print("fail")
+                  elif ("d" in time):
+                      popped = time.strip("d")
+                      if int(popped) > 365:
+                          await ctx.send("You can only setnicks for a year, at most.")
+                      final = 60 * 60 * int(popped) * 24
+                      await member.add_roles(locknick)
+                      await member.set_nick(nick = nickname)
+                      await ctx.send("{0}'s named has been locked for {1} days.".format(member, popped))
+                      await asyncio.sleep(final)
+                      await member.remove_roles(locknick)
+                      try:
+                          await member.send("Your nickname in {0} is now unlocked.".format(server))
+                      except:
+                          print("fail")
+              except ValueError:
+                  await ctx.send("An error occured. Please check to make sure you provided a valid length.")
+                  return
           else:
             await ctx.send("You don't have permission to run this command!")
             return
                 
+        @setnick.error
+        async def fail(ctx, error):
+          if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+            await ctx.send("Missing a required field. Format is: `setnick [user] [time] [nickname]`")
+          else:
+            await ctx.send("`{0}`".format(error))
+
         @kick.error
         @ban.error
         @mute.error
         @unmute.error
         @unban.error
         @nick.error
-        @setnick.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")
