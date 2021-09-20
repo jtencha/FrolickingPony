@@ -1,11 +1,8 @@
 import discord
 from discord.ext import commands
-from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
-from discord import Member
 from secret import token
 import os
-import asyncio
-import random
+from flask import Flask
 
 #Prefix can be changed here
 prefix = "?"
@@ -81,3 +78,11 @@ for filename in os.listdir("./cogs"):
 
 print("Second stage clear")
 bot.run(token)
+
+app = Flask(__name__)
+@app.route('/')
+def index():
+  print("Locked and loaded.")
+  return "Cleared"
+if __name__ == "__main__":
+  app.run(host = "0.0.0.0", debug = True, port = 8080)
