@@ -2,10 +2,8 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
 from discord import Member
-from secret import token
 import os
 import asyncio
-import random
 
 class ModCommands(commands.Cog):
     def __init__(self, bot):
@@ -100,9 +98,8 @@ class ModCommands(commands.Cog):
                 locked.send_messages = False
                 await channel.set_permissions(muterole, overwrite = locked)
 
-        #function unMute
+        #remove the mute role from a member
         #Will only unmute if user has "muterole"
-        #It will still return an error if the mute role isn't present.
         @bot.command()
         @bot_has_permissions(manage_messages = True)
         async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
@@ -117,6 +114,7 @@ class ModCommands(commands.Cog):
                     else:
                         await member.remove_roles(muterole)
                         await ctx.send("{0} has been unmuted for {1}.".format(member, reason))
+                #todo: create a function that can auto create roles
                 except AttributeError:
                     await ctx.send('Please configure a role named "Muted" for the bot to use.')
                 except discord.Forbidden:
@@ -132,16 +130,14 @@ class ModCommands(commands.Cog):
                 await ctx.send("You don't have permission to run this command!")
                 return
 
-        #Function kickMembers
-        #Kicks a member and DMs them.
-        #Returns if the targeted user is too powerful or the bot lacks perms.
+        #kicks a member
         @bot.command()
         @bot_has_permissions(ban_members = True)
         async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
             if ctx.message.author.guild_permissions.kick_members:
                 moderator = ctx.message.author
                 server = ctx.guild
-                #Will still kick and return a custom error if DM fails.
+                #sanity check
                 if moderator == member:
                     await ctx.send("You cannot kick yourself!")
                     return
@@ -162,17 +158,14 @@ class ModCommands(commands.Cog):
                 await ctx.send("You don't have permission to run this command!")
                 return
 
-
-        #function banMembers
-        #Bans a member and DMs them
-        #Returns if the targeted user is too powerful or the bot lacks perms.
+        #ban a member
         @bot.command()
         @bot_has_permissions(ban_members = True)
         async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
             if ctx.message.author.guild_permissions.ban_members:
                 moderator = ctx.message.author
                 server = ctx.guild
-                #Will still kick and return a custom error if DM fails.
+                #another sanity check... you would think this wouldn't be neccessary
                 if moderator == member:
                     await ctx.send("You cannot ban yourself!")
                     return
@@ -193,6 +186,8 @@ class ModCommands(commands.Cog):
                 await ctx.send("You don't have permission to run this command!")
 
 
+        #unban a Member
+        #todo: bot unbans but returns an error
         @bot.command()
         @bot_has_permissions(ban_members = True)
         @guild_only()
@@ -204,6 +199,7 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send("You don't have permission to run this command!")
 
+        #set a nickname of a member
         @bot.command()
         @bot_has_permissions(manage_nicknames = True)
         async def nick(ctx, member: discord.Member, *, nickname = None):
@@ -224,6 +220,9 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send("You don't have permission to run this command!")
 
+        #set a user's nickname as something for x amount of time
+        #assigns a role banning them fron changing their name
+        #won't work if the user has perms to manage other nicknames other than theirs
         @bot.command()
         @bot_has_permissions(manage_nicknames = True, manage_roles = True)
         async def setnick(ctx, member: discord.Member, time, *, nickname = None):
@@ -237,7 +236,7 @@ class ModCommands(commands.Cog):
                         locked = channel.overwrites_for(locknick)
                         locked.change_nickname = False
                         await channel.set_permissions(locknick, overwrite = locked)
-                    await ctx.send("Role has configured. Please re-run the most recent comamnd.")
+                    await ctx.send("Configured role for lock.")
 
                 if moderator == member:
                     await ctx.send("I don't think you want to do this...")
@@ -299,13 +298,15 @@ class ModCommands(commands.Cog):
                 await ctx.send("You don't have permission to run this command!")
                 return
 
+        #detailed error return- it's a wonky command
         @setnick.error
         async def fail(ctx, error):
           if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-            await ctx.send("Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to unlock once more`")
+            await ctx.send("Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`")
           else:
             await ctx.send("`{0}`".format(error))
 
+        #return an error if something wonky happened
         @kick.error
         @ban.error
         @mute.error

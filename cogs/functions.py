@@ -22,7 +22,6 @@ class Functions(commands.Cog):
             ]))
 
         @bot.command()
-        #Plan to make :amogusmybeloved: actually return an emote
         async def amogus(ctx):
             await ctx.send(random.choice(["Sus", "Sussy", "AMOGUS", "I love amogus", "<:amogusmybeloved:889694808963162113>"]))
             await ctx.send(random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
@@ -37,7 +36,7 @@ class Functions(commands.Cog):
             embed = discord.Embed(title = ":ping_pong: Pong!", description = f"{round(bot.latency * 1000)}ms", color = 0x009933)
             await ctx.send(embed = embed)
 
-        #Invite command
+        #todo: update invite link, can't access discord developer portal on the school chromebook
         @bot.command()
         async def invite(ctx):
             embed = discord.Embed(title = "Invite RoboticPony", url = "https://discord.com/api/oauth2/authorize?client_id=834799912507277312&permissions=244239027318&scope=bot", description = "Invite the bot with the link above!", color = 0x009933)
@@ -54,8 +53,7 @@ class Functions(commands.Cog):
                 if option_four != None:
                     embed.add_field(name = "4️⃣ Option Four:", value = "{0}".format(option_four), inline = False)
 
-            #Inefficient, but it gets the job done. I'll make it prettier and less repetitive later.
-            #Deletes the ;poll command typed by the user.
+            #Deletes the command typed by the user.
             await ctx.message.delete()
             poll = await ctx.send(embed = embed)
             await poll.add_reaction("1️⃣")
@@ -73,7 +71,7 @@ class Functions(commands.Cog):
             else:
                 await ctx.send("`{0}`".format(error))
 
-        #Get information about a user - will return bot stuff if no user is provided
+        #info on user
         @bot.command()
         async def about(ctx, member: discord.Member):
             embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0x009933)

@@ -16,9 +16,9 @@ class Help(commands.Cog):
             embed.add_field(name = "Format:", value = format)
             embed.add_field(name = "Permissions Required:", value = perms_req, inline = True)
             return embed
-        #Help list
-        #Use numbers to navigate the menus
-        #Defaults to ;commands 1 if no number is provided.
+        
+        #provide specific info for a given command
+        #plug and chug into the function above
         @bot.command()
         async def help(ctx, type = "1"):
             if type == "1":
@@ -29,9 +29,6 @@ class Help(commands.Cog):
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5.1\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
-                #embed = discord.Embed(title = "about", description = "Get information about a user.", color = 0x009933)
-                #embed.add_field(name = "Format:", value = "`about [user]`")
-                #embed.add_field(name = "Permissions Required:", value = "Send messages", inline = True)
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
             elif type == "guetzali":
                 await ctx.send(embed = help_template("guetzali", "Guetzali Guetzali", "`guetzali`", "Send messages"))
@@ -72,7 +69,7 @@ class Help(commands.Cog):
             elif type == "amogus":
                 await ctx.send(embed = help_template("amogus", "Sussy command", "`amogus`", "Send Messages"))
             else:
-                await ctx.send("`Invalid command.`")
+                await ctx.send("{0} is not a vaild command!.".format(type))
 
 
 def setup(bot):
