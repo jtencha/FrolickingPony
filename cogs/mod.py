@@ -208,7 +208,11 @@ class ModCommands(commands.Cog):
         @bot_has_permissions(manage_nicknames = True)
         async def nick(ctx, member: discord.Member, *, nickname = None):
             if ctx.message.author.guild_permissions.manage_nicknames:
-                if nickname == None:
+                if len(nickname) > 32:
+                    await ctx.send("Nicknames must be shorter than 32 characters!")
+                    return
+                    
+                elif nickname == None:
                     await member.edit(nick = None)
                     await ctx.send("{0}'s nickname has been reset.".format(member))
                 else:
@@ -216,7 +220,7 @@ class ModCommands(commands.Cog):
                         await member.edit(nick = nickname)
                         await ctx.send("{0}'s name has been changed to {1} by {2}.".format(member, nickname, ctx.message.author))
                     except discord.HTTPException:
-                        await ctx.send("Nicknames must be shorter than 32 characters!")
+                        await ctx.send("Command failed. Check that the bot role is hoisted high enough.")
             else:
                 await ctx.send("You don't have permission to run this command!")
 
@@ -237,6 +241,10 @@ class ModCommands(commands.Cog):
 
                 if moderator == member:
                     await ctx.send("I don't think you want to do this...")
+                    return
+
+                elif len(nickname) > 32:
+                    await ctx.send("Nicknames must be shorter than 32 characters!")
                     return
 
                 elif nickname == None:

@@ -26,7 +26,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick` `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5\nDeveloped by: FamiliarNameMissing and discord.py")
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5.1\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
                 #embed = discord.Embed(title = "about", description = "Get information about a user.", color = 0x009933)
