@@ -21,6 +21,15 @@ class Functions(commands.Cog):
             "https/media.discordapp.net/attachments/404803931227553802/860570540996427836/4babe53e-cbe3-4ca7-a40a-60a9bcf4fd9d.gif",
             ]))
 
+        @bot.command()
+        async def amogus(ctx):
+            await ctx.send(random.choice(["sus", "Sussy", "AMOGUS", "I love amogus", ":amogusmybeloved"]))
+            await ctx.send(random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
+            "https://tenor.com/view/sus-amogus-diary-of-a-wimpy-kid-sussy-twerk-gif-21402922",
+            "https://media.discordapp.net/attachments/547864105046769676/886434964479029279/de65d757-bbd8-4e7e-b0c7-7ac35d148b14.gif",
+            ]))
+
+
         #Bot response time
         @bot.command()
         async def ping(ctx):
@@ -93,7 +102,7 @@ class Functions(commands.Cog):
                 await ctx.send("You need to ask me something...")
             else:
                 await ctx.send("`{0}`".format(error))
-        
+
         @bot.command()
         async def embed(ctx, title, *, message):
             embed = discord.Embed(title = title, description = message, color = 0x009933)
@@ -104,7 +113,7 @@ class Functions(commands.Cog):
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You need to give me something to embed!")
+                await ctx.send("You need to give me a title and message to embed!")
             else:
                 await ctx.send("`{0}`".format(error))
 
