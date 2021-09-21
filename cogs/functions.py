@@ -22,8 +22,9 @@ class Functions(commands.Cog):
             ]))
 
         @bot.command()
+        #Plan to make :amogusmybeloved: actually return an emote
         async def amogus(ctx):
-            await ctx.send(random.choice(["sus", "Sussy", "AMOGUS", "I love amogus", ":amogusmybeloved"]))
+            await ctx.send(random.choice(["sus", "Sussy", "AMOGUS", "I love amogus", ":amogusmybeloved:"]))
             await ctx.send(random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
             "https://tenor.com/view/sus-amogus-diary-of-a-wimpy-kid-sussy-twerk-gif-21402922",
             "https://media.discordapp.net/attachments/547864105046769676/886434964479029279/de65d757-bbd8-4e7e-b0c7-7ac35d148b14.gif",
