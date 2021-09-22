@@ -116,7 +116,7 @@ class ModCommands(commands.Cog):
                         await ctx.send("{0} has been unmuted for {1}.".format(member, reason))
                 #todo: create a function that can auto create roles
                 except AttributeError:
-                    await ctx.send('Please configure a role named "Muted" for the bot to use.')
+                    await ctx.send('Could not find a role named "Muted"')
                 except discord.Forbidden:
                     await ctx.send("I was unable to unmute this user.")
                     return
@@ -195,7 +195,7 @@ class ModCommands(commands.Cog):
             if ctx.message.author.guild_permissions.ban_members:
                 userid = await bot.fetch_user(id)
                 await ctx.guild.unban(userid)
-                await ctx.send("{0} has been unbanned by {0}.".format(userid, ctx.message.author))
+                await ctx.send("{0} has been unbanned by {1}.".format(userid, ctx.message.author))
             else:
                 await ctx.send("You don't have permission to run this command!")
 
@@ -204,13 +204,12 @@ class ModCommands(commands.Cog):
         @bot_has_permissions(manage_nicknames = True)
         async def nick(ctx, member: discord.Member, *, nickname = None):
             if ctx.message.author.guild_permissions.manage_nicknames:
-                if len(nickname) > 32:
-                    await ctx.send("Nicknames must be shorter than 32 characters!")
-                    return
-                    
-                elif nickname == None:
+                if nickname == None:
                     await member.edit(nick = None)
                     await ctx.send("{0}'s nickname has been reset.".format(member))
+                elif len(nickname) > 32:
+                    await ctx.send("Nicknames must be shorter than 32 characters!")
+                    return
                 else:
                     try:
                         await member.edit(nick = nickname)
@@ -306,16 +305,26 @@ class ModCommands(commands.Cog):
           else:
             await ctx.send("`{0}`".format(error))
 
+
+        @unban.error
+        async def failed(ctx, error):
+            if isinstance(error, discord.ext.commands.BadArgument):
+                await ctx.send("This command does not accept mentions. Please use an ID.")
+            elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
+                await ctx.send("This user is not banned from this server.")
+            else:
+                await ctx.send("`{0}`".format(error))
         #return an error if something wonky happened
         @kick.error
         @ban.error
         @mute.error
         @unmute.error
-        @unban.error
         @nick.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")
+            elif isinstance(error, discord.ext.commands.BadArgument):
+                await ctx.send("Could not find provided member.")
             else:
                 await ctx.send("`{0}`".format(error))
 
