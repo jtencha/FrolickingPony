@@ -92,7 +92,7 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def eightball(ctx, question):
-            choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so"]
+            choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so", "Sussy", "Kinda sus not gonna lie"]
             await ctx.send(random.choice(choices))
 
         @eightball.error
@@ -117,16 +117,16 @@ class Functions(commands.Cog):
         @bot.command()
         async def suggest(ctx, *, message):
             try:
-                await ctx.send('Are you sure that you want to send this message to the developer? Respond "YES".')
+                await ctx.send('Are you sure that you want to send this message to the developer? Respond "CONFIRM" (case sensitive).')
                 await ctx.send("Abuse will result in a ban from using this command.")
                 def check(msg):
-                    if msg.content != "YES":
+                    if msg.content != "CONFIRM":
                         raise TypeError
                     else:
-                        return msg.content == "YES"
+                        return msg.content == "CONFIRM"
                 await bot.wait_for("message", check = check)
                 channel = bot.get_channel(890432795342696488)
-                await channel.send("Suggestion from {0}: {1}".format(ctx.guild, message))
+                await channel.send("Suggestion by {0} from {1}: {2}".format(ctx.message.author, ctx.guild, message))
                 await ctx.send("Suggestion sent to developer.")
             except TypeError:
                 await ctx.send("Suggestion terminated.")
