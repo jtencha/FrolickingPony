@@ -22,11 +22,11 @@ class Help(commands.Cog):
         @bot.command()
         async def help(ctx, type = "1"):
             if type == "1":
-                embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, ", color = 0x009933)
-                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
+                embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0x009933)
+                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed` `sourcecode` `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick` `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5.1\nDeveloped by: FamiliarNameMissing and discord.py")
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5.4\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
@@ -68,6 +68,10 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("setnick", "Change a user's nickname for a set time and stop them from changing it.", "`setnick [user] [time] [nickname]`", "Manage nicknames, manage roles"))
             elif type == "amogus":
                 await ctx.send(embed = help_template("amogus", "Sussy command", "`amogus`", "Send Messages"))
+            elif type == "sourcecode":
+                await ctx.send(embed = help_template("sourcecode", "Provides a link to the source code for this bot.", "`sourcecode`", "Send Messages"))
+            elif type == "suggest":
+                await ctx.send(embed = help_template("suggest", "Suggest feedback to bot developers.", "`suggest [message]`", "Send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 

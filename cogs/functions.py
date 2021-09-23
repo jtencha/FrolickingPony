@@ -109,12 +109,43 @@ class Functions(commands.Cog):
             await ctx.message.delete()
             await ctx.send(embed = embed)
 
+        @bot.command()
+        async def sourcecode(ctx):
+            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/FamiliarNameMissing/RoboticPony", color = 0x009933)
+            await ctx.send(embed = embed)
+        
+        @bot.command()
+        async def suggest(ctx, *, message):
+            try:
+                await ctx.send('Are you sure that you want to send this message to the developer? Respond "YES".')
+                await ctx.send("Abuse will result in a ban from using this command.")
+                def check(msg):
+                    if msg.content != "YES":
+                        raise TypeError
+                    else:
+                        return msg.content == "YES"
+                await bot.wait_for("message", check = check)
+                channel = bot.get_channel(890432795342696488)
+                await channel.send("Suggestion from {0}: {1}".format(ctx.guild, message))
+                await ctx.send("Suggestion sent to developer.")
+            except TypeError:
+                await ctx.send("Suggestion terminated.")
+
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You need to give me a title and message to embed!")
             else:
                 await ctx.send("`{0}`".format(error))
+        
+        @suggest.error 
+        async def failed(ctx, error):
+          if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+              await ctx.send("You did not give me a suggestion!")
+          elif isinstance(TypeError):
+              await ctx.send("Suggestion terminated.")
+          else:
+              await ctx.send("`{0}`".format(error))
 
 def setup(bot):
     bot.add_cog(Functions(bot))
