@@ -16,17 +16,17 @@ class Help(commands.Cog):
             embed.add_field(name = "Format:", value = format)
             embed.add_field(name = "Permissions Required:", value = perms_req, inline = True)
             return embed
-        
+
         #provide specific info for a given command
         #plug and chug into the function above
         @bot.command()
         async def help(ctx, type = "1"):
             if type == "1":
                 embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0x009933)
-                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed` `sourcecode` `suggest`", inline = False)
+                embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed` \n\n`sourcecode` `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick` `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.5.4\nDeveloped by: FamiliarNameMissing and discord.py")
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.1\nDeveloped by: FamiliarNameMissing and discord.py")
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
@@ -74,7 +74,6 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("suggest", "Suggest feedback to bot developers.", "`suggest [message]`", "Send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
-
 
 def setup(bot):
     bot.add_cog(Help(bot))
