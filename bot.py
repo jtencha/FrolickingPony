@@ -39,7 +39,10 @@ async def reset(ctx):
             if filename.endswith(".py"):
                 bot.unload_extension("cogs.{0}".format(filename[:-3]))
                 bot.load_extension("cogs.{0}".format(filename[:-3]))
-        await ctx.send("Successfully reset the bot.")
+        await ctx.send("The following files have been reloaded.")
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await ctx.send("```" + filename + "```")
     else:
         await ctx.send("Only the bot owner can use this command!")
 
@@ -82,7 +85,7 @@ bot.run(token)
 app = Flask(__name__)
 @app.route('/')
 def index():
-  print("Locked and loaded.")
-  return "Cleared"
-if __name__ == "__main__":
-  app.run(host = "0.0.0.0", debug = True, port = 8080)
+    print("Locked and loaded.")
+    return "Cleared"
+if  __name__ == "__main__":
+    app.run(host = "0.0.0.0", debug = True, port = 8080)

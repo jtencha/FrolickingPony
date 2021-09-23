@@ -22,7 +22,7 @@ class Help(commands.Cog):
         @bot.command()
         async def help(ctx, type = "1"):
             if type == "1":
-                embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information.", color = 0x009933)
+                embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, ", color = 0x009933)
                 embed.add_field(name = "Commands: ", value = "`about` `guetzali` `amogus` `help` `invite` `ping` `poll` `eightball` `embed`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` `unmute` `kick` `ban` `unban` `nick` `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` `reset` `pack` `unpack`", inline = False)

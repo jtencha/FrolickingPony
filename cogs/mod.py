@@ -56,8 +56,11 @@ class ModCommands(commands.Cog):
                             except discord.HTTPException:
                                 await ctx.send("Unknown error - DM failed.")
                             await asyncio.sleep(final)
-                            await member.remove_roles(muterole)
-                            await member.send("You have been unmuted in {0}.".format(server))
+                            try:
+                                await member.remove_roles(muterole)
+                                await member.send("You have been unmuted in {0}.".format(server))
+                            except:
+                                pass
                         elif ("m" in time):
                             popped = time.strip("m")
                             final = 60 * int(popped)
@@ -70,8 +73,11 @@ class ModCommands(commands.Cog):
                             except discord.HTTPException:
                                 await ctx.send("Unknown error - DM failed.")
                             await asyncio.sleep(final)
-                            await member.remove_roles(muterole)
-                            await member.send("You have been unmuted in {0}.".format(server))
+                            try:
+                                await member.remove_roles(muterole)
+                                await member.send("You have been unmuted in {0}.".format(server))
+                            except:
+                                pass
                         else:
                             await ctx.send((time) + " is not a valid length!")
                             return
@@ -215,7 +221,7 @@ class ModCommands(commands.Cog):
                         await member.edit(nick = nickname)
                         await ctx.send("{0}'s name has been changed to {1} by {2}.".format(member, nickname, ctx.message.author))
                     except discord.HTTPException:
-                        await ctx.send("Command failed. Check that the bot role is hoisted high enough.")
+                        await ctx.send("Command failed. Check that the bot role is hoisted high enough and that your role is higher than the targeted user.")
             else:
                 await ctx.send("You don't have permission to run this command!")
 
@@ -253,7 +259,7 @@ class ModCommands(commands.Cog):
                         await member.send("Your nickname in {0} is now unlocked.".format(server))
                     except:
                         print("fail")
-                    return
+                        return
 
                 elif locknick in member.roles:
                     await ctx.send("This user is already locked.")
