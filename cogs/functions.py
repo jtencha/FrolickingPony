@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
 from discord import Member
-from secret import token
 import os
 import asyncio
 import random
@@ -10,6 +9,12 @@ import random
 class Functions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        @bot.command()
+        async def avatar(ctx, member: discord.Member):
+            embed = discord.Embed(title = "{0}'s avatar".format(ctx.message.author), description = "\n", color = 0xff6633)
+            embed.set_image(url = member.avatar_url)
+            await ctx.send(embed = embed)
 
         #Bot response time
         @bot.command()
@@ -65,12 +70,14 @@ class Functions(commands.Cog):
             await ctx.send(embed = embed)
 
         @about.error
+        @avatar.error
         async def incorrect(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")
-            else:
+            #else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
+                print(error)
 
         @bot.command()
         async def eightball(ctx, question):
@@ -117,7 +124,7 @@ class Functions(commands.Cog):
                 await ctx.send(embed = embed)
 
             except TypeError:
-                embed = discord.Embed(title = "Suggestion Terminated", description = ":x: You suggestion has successfully been terminated.", color = 0xff0000)
+                embed = discord.Embed(title = "Suggestion Terminated", description = ":x: Your suggestion has successfully been terminated.", color = 0xff0000)
                 await ctx.send(embed = embed)
 
 

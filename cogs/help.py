@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
 from discord import Member
-from secret import token
 import os
 import asyncio
 import random
@@ -19,14 +18,14 @@ class Help(commands.Cog):
 
         #provide specific info for a given command
         #plug and chug into the function above
-        @bot.command()
+        @bot.command(aliases = ["h"])
         async def help(ctx, type = "1"):
             if type == "1":
-                embed = discord.Embed(title = "RoboticPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
-                embed.add_field(name = "Commands: ", value = "`about` | `guetzali` | `amogus` | `help` | `invite` | `ping` | `poll` | `eightball` | `embed` | `sourcecode` | `suggest`", inline = False)
-                embed.add_field(name = "Mod Commands:", value = "`mute` | `unmute` | `kick` | `ban` | `unban` | `nick` | `setnick`", inline = False)
+                embed = discord.Embed(title = "FrolickingPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
+                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `suggest`", inline = False)
+                embed.add_field(name = "Mod Commands:", value = "`mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reset` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.2\nDeveloped by: FamiliarNameMissing and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.3\nDeveloped by: FamiliarNameMissing and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
@@ -49,7 +48,7 @@ class Help(commands.Cog):
             elif type == "ban":
                 await ctx.send(embed = help_template("ban", "Ban a user", "`ban [user] (reason)`", "Ban members"))
             elif type == "unban":
-                await ctx.send(embed = help_template("unban", "Unban a user (and return some errors while you're at it)", "`unban [user]`", "Ban members"))
+                await ctx.send(embed = help_template("unban", "Unban a user", "`unban [user]`", "Ban members"))
             elif type == "sleep":
                 await ctx.send(embed = help_template("sleep", "Sleep well, RoboticPony", "`sleep`", "Send messages (owner only)"))
             elif type == "reset":
@@ -72,6 +71,12 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("sourcecode", "Provides a link to the source code for this bot.", "`sourcecode`", "Send Messages"))
             elif type == "suggest":
                 await ctx.send(embed = help_template("suggest", "Suggest feedback to bot developers.", "`suggest [message]`", "Send messages"))
+            elif type == "tempban":
+                await ctx.send(embed = help_template("tempban", "Temporarily ban a member.", "`tempban [member] [time] (reason)`", "Ban Messages"))
+            elif type == "avatar":
+                await ctx.send(embed = help_template("avatar", "Display a member's avatar.", "`avatar [member]`", "Send messages"))
+            elif type == "redpanda":
+                await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:891098560387510272>", "`redpanda`", "Send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 

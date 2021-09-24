@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions, guild_only
 from discord import Member
-from secret import token
 import os
 import asyncio
 import random
@@ -23,12 +22,28 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def amogus(ctx):
-            await ctx.send(random.choice(["Sus", "Sussy", "AMOGUS", "I love amogus", "<:amogusmybeloved:889694808963162113>"]))
-            await ctx.send(random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
-            "https://tenor.com/view/sus-amogus-diary-of-a-wimpy-kid-sussy-twerk-gif-21402922",
+            embed = discord.Embed(title = random.choice(["Sus", "Sussy", "AMOGUS", "I love amogus", "{0} is sus".format(ctx.message.author)]), description = "\n", color = 0xff6633)
+            embed.set_image(url = random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
+            "https://c.tenor.com/k_H-Sf-5D8IAAAAd/sus-amogus.gif",
             "https://media.discordapp.net/attachments/547864105046769676/886434964479029279/de65d757-bbd8-4e7e-b0c7-7ac35d148b14.gif",
-            ]))
+            "https://c.tenor.com/XhYqu5fu4LgAAAAd/boiled-soundcloud-boiled.gif"]))
+            msg = await ctx.send(embed = embed)
 
+        @bot.command()
+        async def redpanda(ctx):
+            embed = discord.Embed(title = "Red Panda, My Beloved", description = "\n", color = 0xff6633)
+            embed.set_image(url = random.choice(["https://cdn.discordapp.com/avatars/825212502978723861/c94bd91c4e02b1c9600418e7f8631157.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891099004446842880/redpanda.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891099410040229908/red-panda-3.png",
+            "https://media.discordapp.net/attachments/866857228833128449/891099663250362398/OIP.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891100220560121856/OIP.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891100315544326144/OIP.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891100505693093938/OIP.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891100587259740190/OIP.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891100785260265502/red-pandas-cincinnati-zoo-3.png",
+            "https://cdn.discordapp.com/attachments/866857228833128449/891101059190247444/OIP.png"
+            ]))
+            await ctx.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(Epic(bot))

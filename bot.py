@@ -1,8 +1,10 @@
+import os
 import discord
 from discord.ext import commands
-from secret import token
-import os
+
 from flask import Flask
+
+token = os.environ['bottoken']
 
 #Prefix can be changed here
 prefix = "?"
