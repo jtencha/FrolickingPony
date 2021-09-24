@@ -9,9 +9,25 @@ class ModCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        def getTime(time):
+            if ("d" in time):
+                popped = time.strip("d")
+                final = 60 * 60 * int(popped) * 24
+                return final
+            elif ("h" in time):
+                popped = time.strip("h")
+                final = 60 * 60 * int(popped)
+                return final
+            elif ("m" in time):
+                popped = time.strip("m")
+                final = 60 * int(popped)
+                return final
+            else:
+                raise ValueError
+
         @bot.command()
         @bot_has_permissions(manage_messages = True)
-        async def mute(ctx, member: discord.Member, time = None, *, reason = "Not Specified"):
+        async def mute(ctx, member: discord.Member, time = "10m", *, reason = "Not Specified"):
             if ctx.message.author.guild_permissions.mute_members:
                 moderator = ctx.message.author
                 server = ctx.guild
@@ -24,7 +40,6 @@ class ModCommands(commands.Cog):
                         locked.send_messages = False
                         await channel.set_permissions(muterole, overwrite = locked)
 
-
                 if muterole in member.roles:
                     await ctx.send("This user is already muted.")
                     return
@@ -33,63 +48,33 @@ class ModCommands(commands.Cog):
                     return
                 else:
                     try:
-                        #TODO - get rid of this spaghetti crap
-                        if (time == None):
-                            print("No time provided.")
-                            await member.add_roles(muterole)
-                            await ctx.send("{0} has been muted for {1}.".format(member, reason))
-                            try:
-                                await member.send("You have been muted by {0} in {1} for {2}.".format(moderator, server, reason))
-                            except discord.Forbidden:
-                                await ctx.send("I can't DM this user.")
-                            except discord.HTTPException:
-                                await ctx.send("Unknown error - DM failed.")
-                        elif ("h" in time):
-                            popped = time.strip("h")
-                            final = 60 * 60 * int(popped)
-                            await member.add_roles(muterole)
-                            await ctx.send("{0} has been muted for {1} hours for {2}.".format(member, popped, reason))
-                            try:
-                                await member.send("You have been muted for {0} hour(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
-                            except discord.Forbidden:
-                                await ctx.send("I can't DM this user.")
-                            except discord.HTTPException:
-                                await ctx.send("Unknown error - DM failed.")
-                            await asyncio.sleep(final)
-                            try:
-                                await member.remove_roles(muterole)
-                                await member.send("You have been unmuted in {0}.".format(server))
-                            except:
-                                pass
-                        elif ("m" in time):
-                            popped = time.strip("m")
-                            final = 60 * int(popped)
-                            await member.add_roles(muterole)
-                            await ctx.send("{0} has been muted for {1} minutes for {2}.".format(member, popped, reason))
-                            try:
-                                await member.send("You have been muted for {0} minute(s) by {1} in {2} for {3}.".format(popped, moderator, server, reason))
-                            except discord.Forbidden:
-                                await ctx.send("I can't DM this user.")
-                            except discord.HTTPException:
-                                await ctx.send("Unknown error - DM failed.")
-                            await asyncio.sleep(final)
-                            try:
-                                await member.remove_roles(muterole)
-                                await member.send("You have been unmuted in {0}.".format(server))
-                            except:
-                                pass
-                        else:
-                            await ctx.send((time) + " is not a valid length!")
-                            return
+                        toSleep = getTime(time)
+
+                        await member.add_roles(muterole)
+                        await ctx.send("{0} has been muted for {1} for {2}.".format(member, time, reason))
+                        try:
+                            await member.send("You have been muted for {0} by {1} in {2} for {3}.".format(time, moderator, server, reason))
+                        except discord.Forbidden:
+                            await ctx.send("I can't DM this user.")
+                        except discord.HTTPException:
+                            await ctx.send("Unknown error - DM failed.")
+
+                        await asyncio.sleep(toSleep)
+                        try:
+                            await member.remove_roles(muterole)
+                            await member.send("You have been unmuted in {0}.".format(server))
+                        except:
+                            pass
+
                     except ValueError:
-                        await ctx.send("An error occured. Please check to make sure you provided a valid length.")
-                        return
+                        await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = time + "is not a valid length! Use ?help mute for a guideline.", color = 0xff0000))
                     except discord.Forbidden:
                         await ctx.send("I was unable to mute this user.")
                         return
             else:
                 await ctx.send("You don't have permission to run this command!")
                 return
+
 
 
         #Check that mute works every time a channel is created
@@ -165,6 +150,8 @@ class ModCommands(commands.Cog):
                 return
 
         #ban a member
+        #todo: make temp bans
+        #will probs make another command so I don't have to deal with conflicts
         @bot.command()
         @bot_has_permissions(ban_members = True)
         async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
@@ -213,6 +200,12 @@ class ModCommands(commands.Cog):
                 if nickname == None:
                     await member.edit(nick = None)
                     await ctx.send("{0}'s nickname has been reset.".format(member))
+                    try:
+                        locknick = discord.utils.get(member.guild.roles, name = "Nickname Banned")
+                        await member.remove_roles(locknick)
+                    except:
+                        return
+
                 elif len(nickname) > 32:
                     await ctx.send("Nicknames must be shorter than 32 characters!")
                     return
@@ -221,7 +214,7 @@ class ModCommands(commands.Cog):
                         await member.edit(nick = nickname)
                         await ctx.send("{0}'s name has been changed to {1} by {2}.".format(member, nickname, ctx.message.author))
                     except discord.HTTPException:
-                        await ctx.send("Command failed. Check that the bot role is hoisted high enough and that your role is higher than the targeted user.")
+                        await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = "Check that the bot role is hoisted high enough and that your role is higher than the targeted user.", color = 0xff0000))
             else:
                 await ctx.send("You don't have permission to run this command!")
 
@@ -297,7 +290,7 @@ class ModCommands(commands.Cog):
                         except:
                             print("fail")
                 except ValueError:
-                    await ctx.send("An error occured. Please check to make sure you provided a valid length.")
+                    await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = time + "is not a valid length! Use ?help mute for a guideline.", color = 0xff0000))
                     return
             else:
                 await ctx.send("You don't have permission to run this command!")
@@ -306,10 +299,11 @@ class ModCommands(commands.Cog):
         #detailed error return- it's a wonky command
         @setnick.error
         async def fail(ctx, error):
-          if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-            await ctx.send("Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`")
-          else:
-            await ctx.send("`{0}`".format(error))
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`")
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
 
 
         @unban.error
@@ -319,7 +313,9 @@ class ModCommands(commands.Cog):
             elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
                 await ctx.send("This user is not banned from this server.")
             else:
-                await ctx.send("`{0}`".format(error))
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
+
         #return an error if something wonky happened
         @kick.error
         @ban.error
@@ -332,7 +328,8 @@ class ModCommands(commands.Cog):
             elif isinstance(error, discord.ext.commands.BadArgument):
                 await ctx.send("Could not find provided member.")
             else:
-                await ctx.send("`{0}`".format(error))
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(ModCommands(bot))
