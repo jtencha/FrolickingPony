@@ -12,7 +12,7 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def avatar(ctx, member: discord.Member):
-            embed = discord.Embed(title = "{0}'s avatar".format(ctx.message.author), description = "\n", color = 0xff6633)
+            embed = discord.Embed(title = "{0}'s avatar".format(member), description = "\n", color = 0xff6633)
             embed.set_image(url = member.avatar_url)
             await ctx.send(embed = embed)
 
@@ -52,7 +52,7 @@ class Functions(commands.Cog):
         @poll.error
         async def denied(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You must include at least two choices!")
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include at least two poll options!", color = 0xff0000))
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
@@ -74,7 +74,7 @@ class Functions(commands.Cog):
         async def incorrect(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You did not include a user!")
-            #else:
+            else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
                 print(error)
@@ -93,7 +93,7 @@ class Functions(commands.Cog):
                 await ctx.send(embed = embed)
 
         @bot.command()
-        async def embed(ctx, title, *, message):
+        async def embed(ctx, title, *, message = "\n"):
             embed = discord.Embed(title = title, description = message, color = 0xff6633)
             embed.set_author(name = "{0}".format(ctx.message.author), icon_url = ctx.message.author.avatar_url)
             await ctx.message.delete()
@@ -131,7 +131,7 @@ class Functions(commands.Cog):
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You need to give me a title and message to embed!")
+                await ctx.send("You need to give me at least a title to embed!")
             else:
                 await ctx.send("`{0}`".format(error))
 

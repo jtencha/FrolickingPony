@@ -28,6 +28,10 @@ class ModCommands(commands.Cog):
         def standardError(error):
             embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
             return embed
+        
+        def defaultError(error):
+            embed = discord.Embed(title = ":x:" + error, description = "\n", color = 0xff0000)
+            return embed
 
         @bot.command(aliases = ["m"])
         @bot_has_permissions(manage_messages = True)
@@ -73,10 +77,10 @@ class ModCommands(commands.Cog):
                     except ValueError:
                         await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = time + "is not a valid length! Use ?help mute for a guideline.", color = 0xff0000))
                     except discord.Forbidden:
-                        await ctx.send("I was unable to mute this user.")
+                        await ctx.send(embed = defaultError("I wasn't able to mute this user."))
                         return
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
 
@@ -113,7 +117,7 @@ class ModCommands(commands.Cog):
                 except AttributeError:
                     await ctx.send('Could not find a role named "Muted"')
                 except discord.Forbidden:
-                    await ctx.send("I was unable to unmute this user.")
+                    await ctx.send(embed = defaultError("I wasn't able to unmute this user."))
                     return
                 try:
                     await member.send("You have been unmuted by {0} in {1} for {2}.".format(moderator, server, reason))
@@ -122,7 +126,7 @@ class ModCommands(commands.Cog):
                 except discord.HTTPException:
                     await ctx.send("Unknown error - DM failed.")
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
         #kicks a member
@@ -139,7 +143,7 @@ class ModCommands(commands.Cog):
                 try:
                     await member.kick(reason = reason)
                 except discord.Forbidden:
-                    await ctx.send("I was unable to kick this user.")
+                    await ctx.send(embed = defaultError("I wasn't able to kick this user."))
                     return
                 try:
                     await member.send("You have been kicked from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -150,7 +154,7 @@ class ModCommands(commands.Cog):
 
                 await ctx.send("{0} has been kicked for {1}.".format(member, reason))
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
         #ban a member
@@ -169,7 +173,7 @@ class ModCommands(commands.Cog):
                 try:
                     await member.ban(reason = reason)
                 except discord.Forbidden:
-                    await ctx.send("I was unable to ban this user.")
+                    await ctx.send(embed = defaultError("I wasn't able to ban this user."))
                     return
                 try:
                     await member.send("You have been banned from {0} by {1} for {2}.".format(server, moderator, reason))
@@ -180,7 +184,7 @@ class ModCommands(commands.Cog):
 
                 await ctx.send("{0} has been banned for {1}.".format(member, reason))
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
 
 
         @bot.command(aliases = ["tb"])
@@ -196,7 +200,7 @@ class ModCommands(commands.Cog):
                 try:
                     await member.ban(reason = reason)
                 except discord.Forbidden:
-                    await ctx.send("I was unable to tempban this user.")
+                    await ctx.send(embed = defaultError("I wasn't able to tempban this user."))
                     return
                 try:
                     await member.send("You have been tempbanned for {0} from {0} by {1} for {2}.".format(time, server, moderator, reason))
@@ -213,7 +217,7 @@ class ModCommands(commands.Cog):
                 await ctx.guild.unban(memberID)
 
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
         #unban a Member
@@ -253,7 +257,7 @@ class ModCommands(commands.Cog):
                     except discord.HTTPException:
                         await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = "Check that the bot role is hoisted high enough and that your role is higher than the targeted user.", color = 0xff0000))
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
 
         #set a user's nickname as something for x amount of time
         #assigns a role banning them fron changing their name
@@ -276,11 +280,7 @@ class ModCommands(commands.Cog):
                 if moderator == member:
                     await ctx.send("I don't think you want to do this...")
                     return
-
-                elif len(nickname) > 32:
-                    await ctx.send("Nicknames must be shorter than 32 characters!")
-                    return
-
+                
                 elif nickname == None:
                     await member.remove_roles(locknick)
                     await ctx.send("{0}'s name has been unlocked.".format(member))
@@ -289,7 +289,12 @@ class ModCommands(commands.Cog):
                         await member.send("Your nickname in {0} is now unlocked.".format(server))
                     except:
                         print("fail")
-                        return
+
+                    return
+
+                elif len(nickname) > 32:
+                    await ctx.send("Nicknames must be shorter than 32 characters!")
+                    return
 
                 elif locknick in member.roles:
                     await ctx.send("This user is already locked.")
@@ -330,14 +335,15 @@ class ModCommands(commands.Cog):
                     await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = time + "is not a valid length! Use ?help mute for a guideline.", color = 0xff0000))
                     return
             else:
-                await ctx.send("You don't have permission to run this command!")
+                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
         #detailed error return- it's a wonky command
         @setnick.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`")
+                await ctx.send(embed = discord.Embed(title = ":x: Missing an Argument", description = "Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`", color = 0xff0000))
+
             else:
                 await ctx.send(embed = standardError(error))
 
@@ -345,9 +351,9 @@ class ModCommands(commands.Cog):
         @unban.error
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.BadArgument):
-                await ctx.send("This command does not accept mentions. Please use an ID.")
+                await ctx.send(embed = discord.Embed(title = ":x: Bad Argument Error", description = "This command does not accept mentions. Please use an ID.", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-                await ctx.send("This user is not banned from this server.")
+                await ctx.send(embed = discord.Embed(title = ":x: Execute Error", description = "This user is not banned from this server.", color = 0xff0000))
             else:
                 await ctx.send(embed = standardError(error))
 
@@ -360,9 +366,9 @@ class ModCommands(commands.Cog):
         @nick.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You did not include a user!")
+                await ctx.send(embed = discord.Embed(title = ":x: You did not include a user!", description = "\n", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.BadArgument):
-                await ctx.send("Could not find provided member.")
+                await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
             else:
                 await ctx.send(embed = standardError(error))
 

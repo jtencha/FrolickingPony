@@ -25,7 +25,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reset` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.3\nDeveloped by: FamiliarNameMissing and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.3.1\nDeveloped by: FamiliarNameMissing and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
@@ -56,7 +56,7 @@ class Help(commands.Cog):
             elif type == "eightball":
                 await ctx.send(embed = help_template("eightball", "Virtual eightball", "`eightball`", "Send messages"))
             elif type == "embed":
-                await ctx.send(embed = help_template("embed", "Epic embed fail", "`embed [title] [message]`", "Send messages"))
+                await ctx.send(embed = help_template("embed", "Epic embed fail", "`embed [title] (text)`", "Send messages"))
             elif type == "unpack":
                 await ctx.send(embed = help_template("unpack", "Manually unpack cogs", "`unpack`", "Send messages (owner only)"))
             elif type == "pack":
