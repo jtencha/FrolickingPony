@@ -21,11 +21,11 @@ class Help(commands.Cog):
         @bot.command(aliases = ["h"])
         async def help(ctx, type = "1"):
             if type == "1":
-                embed = discord.Embed(title = "FrolickingPony Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
-                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `suggest`", inline = False)
+                embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
+                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reset` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.3.1\nDeveloped by: FamiliarNameMissing and discord.py", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.4\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
@@ -52,7 +52,7 @@ class Help(commands.Cog):
             elif type == "sleep":
                 await ctx.send(embed = help_template("sleep", "Sleep well, RoboticPony", "`sleep`", "Send messages (owner only)"))
             elif type == "reset":
-                await ctx.send(embed = help_template("reset", "Reset the bot.", "`reset`", "Send messages (owner only)"))
+                await ctx.send(embed = help_template("reload", "Reload the bot.", "`reload`", "Send messages (owner only)"))
             elif type == "eightball":
                 await ctx.send(embed = help_template("eightball", "Virtual eightball", "`eightball`", "Send messages"))
             elif type == "embed":
@@ -76,7 +76,9 @@ class Help(commands.Cog):
             elif type == "avatar":
                 await ctx.send(embed = help_template("avatar", "Display a member's avatar.", "`avatar [member]`", "Send messages"))
             elif type == "redpanda":
-                await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:891098560387510272>", "`redpanda`", "Send messages"))
+                await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:891098560387510272>", "`redpanda`", "Send messages, upload images"))
+            elif type == "stats":
+                await ctx.send(embed = help_template("stats", "Server stats", "`stats`", "Send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 

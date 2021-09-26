@@ -10,10 +10,28 @@ class Functions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-        @bot.command()
+        @bot.command(aliases = ["av"])
         async def avatar(ctx, member: discord.Member):
             embed = discord.Embed(title = "{0}'s avatar".format(member), description = "\n", color = 0xff6633)
             embed.set_image(url = member.avatar_url)
+            await ctx.send(embed = embed)
+
+        @bot.command()
+        async def stats(ctx):
+            server = ctx.guild
+            embed = discord.Embed(title = "{0} Server Stats".format(ctx.guild), description = "\n", color = 0xff6633)
+            embed.add_field(name = "Server ID:", value = server.id, inline = True)
+            embed.add_field(name = "Members:", value = server.member_count, inline = True)
+            embed.add_field(name = "Owner", value = ctx.guild.owner, inline = True)
+            embed.add_field(name = "Channels:", value = len(server.channels), inline = True)
+            embed.add_field(name = "Roles:", value = len(server.roles), inline = True)
+            embed.add_field(name = "Created on:", value = server.created_at.strftime("%A, %B %d %Y"), inline = True)
+            embed.set_thumbnail(url = server.icon_url)
+            await ctx.send(embed = embed)
+
+        @stats.error
+        async def fail(ctx, error):
+            embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
             await ctx.send(embed = embed)
 
         #Bot response time
@@ -22,12 +40,12 @@ class Functions(commands.Cog):
             embed = discord.Embed(title = ":ping_pong: Pong!", description = "{0}ms".format(round(bot.latency * 1000)), color = 0xff6633)
             await ctx.send(embed = embed)
 
-        @bot.command()
+        @bot.command(aliases = ["i"])
         async def invite(ctx):
             embed = discord.Embed(title = "Invite RoboticPony", url = "https://discord.com/api/oauth2/authorize?client_id=834799912507277312&permissions=244239027318&scope=bot", description = "Invite the bot with the link above!", color = 0xff6633)
             await ctx.send(embed = embed)
 
-        @bot.command()
+        @bot.command(aliases = ["p"])
         @bot_has_permissions(manage_messages = True)
         async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
             embed = discord.Embed(title = "Poll Created by {0}".format(ctx.message.author), description = "\n", color = 0xff6633)
@@ -58,14 +76,15 @@ class Functions(commands.Cog):
                 await ctx.send(embed = embed)
 
         #info on user
-        @bot.command()
+        @bot.command(aliases = ["a"])
         async def about(ctx, member: discord.Member):
             embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0xff6633)
             embed.add_field(name = "Name:", value = member.name, inline = True)
             embed.add_field(name = "User ID:", value = member.id, inline = True)
-            embed.add_field(name = "Highest Role:", value = member.top_role)
-            embed.add_field(name = "Created Account:", value = member.created_at)
-            embed.add_field(name = "Joined Server:", value = member.joined_at)
+            embed.add_field(name = "Highest Role:", value = member.top_role.mention)
+            embed.add_field(name = "Created Account:", value = member.created_at.strftime("%A, %B %d %Y"))
+            embed.add_field(name = "Joined Server:", value = member.joined_at.strftime("%A, %B, %d %Y"))
+            embed.add_field(name = "Has Nitro:", value = bool(member.premium_since))
             embed.set_thumbnail(url = member.avatar_url)
             await ctx.send(embed = embed)
 
@@ -73,13 +92,13 @@ class Functions(commands.Cog):
         @avatar.error
         async def incorrect(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You did not include a user!")
+                embed = discord.Embed(title = ":x: Error", description = "You did not include a user!", color = 0xff0000)
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
                 print(error)
 
-        @bot.command()
+        @bot.command(aliases = ["ei"])
         async def eightball(ctx, question):
             choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so", "Sussy", "Kinda sus not gonna lie"]
             await ctx.send(random.choice(choices))
@@ -92,7 +111,7 @@ class Functions(commands.Cog):
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
 
-        @bot.command()
+        @bot.command(aliases = ["e"])
         async def embed(ctx, title, *, message = "\n"):
             embed = discord.Embed(title = title, description = message, color = 0xff6633)
             embed.set_author(name = "{0}".format(ctx.message.author), icon_url = ctx.message.author.avatar_url)
@@ -104,7 +123,7 @@ class Functions(commands.Cog):
             embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/FamiliarNameMissing/RoboticPony", color = 0xff6633)
             await ctx.send(embed = embed)
 
-        @bot.command()
+        @bot.command(aliases = ["su"])
         async def suggest(ctx, *, message):
             try:
                 embed = discord.Embed(title = "Contact Developer", description = "Abuse will result in a ban from this command.", color = 0xff0000)
@@ -131,14 +150,14 @@ class Functions(commands.Cog):
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You need to give me at least a title to embed!")
+                embed = discord.Embed(title = ":x: Error", description = "You need to give me at least a title to embed!", color = 0xff0000)
             else:
                 await ctx.send("`{0}`".format(error))
 
         @suggest.error
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You did not give me a suggestion!")
+                embed = discord.Embed(title = ":x: Error", description = "You did not give me a suggestion!", color = 0xff0000)
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)

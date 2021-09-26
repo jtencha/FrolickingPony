@@ -28,7 +28,7 @@ class ModCommands(commands.Cog):
         def standardError(error):
             embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
             return embed
-        
+
         def defaultError(error):
             embed = discord.Embed(title = ":x:" + error, description = "\n", color = 0xff0000)
             return embed
@@ -280,7 +280,7 @@ class ModCommands(commands.Cog):
                 if moderator == member:
                     await ctx.send("I don't think you want to do this...")
                     return
-                
+
                 elif nickname == None:
                     await member.remove_roles(locknick)
                     await ctx.send("{0}'s name has been unlocked.".format(member))
