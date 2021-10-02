@@ -1,8 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-
-from flask import Flask
+import stayinAlive
 
 token = os.environ['bottoken']
 
@@ -80,13 +79,7 @@ for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension("cogs.{0}".format(filename[:-3]))
 
+stayinAlive.live()
+
 print("Unloaded")
 bot.run(token)
-
-app = Flask(__name__)
-@app.route('/')
-def index():
-    print("Locked and loaded.")
-    return "Cleared"
-if  __name__ == "__main__":
-    app.run(host = "0.0.0.0", debug = True, port = 8080)
