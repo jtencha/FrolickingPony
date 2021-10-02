@@ -28,7 +28,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.4\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
-                await ctx.send(embed = help_template("about", "Get information about a user.", "`about [user]`", "Send messages"))
+                await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
             elif type == "guetzali":
                 await ctx.send(embed = help_template("guetzali", "Guetzali Guetzali", "`guetzali`", "Send messages"))
             elif type == "help":
@@ -74,7 +74,7 @@ class Help(commands.Cog):
             elif type == "tempban":
                 await ctx.send(embed = help_template("tempban", "Temporarily ban a member.", "`tempban [member] [time] (reason)`", "Ban Messages"))
             elif type == "avatar":
-                await ctx.send(embed = help_template("avatar", "Display a member's avatar.", "`avatar [member]`", "Send messages"))
+                await ctx.send(embed = help_template("avatar", "Display a member's avatar. Defaults to your own avatar.", "`avatar [member]`", "Send messages"))
             elif type == "redpanda":
                 await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:891098560387510272>", "`redpanda`", "Send messages, upload images"))
             elif type == "stats":

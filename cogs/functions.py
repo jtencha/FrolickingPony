@@ -5,15 +5,30 @@ from discord import Member
 import os
 import asyncio
 import random
+from typing import Optional
 
 class Functions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
         @bot.command(aliases = ["av"])
-        async def avatar(ctx, member: discord.Member):
-            embed = discord.Embed(title = "{0}'s avatar".format(member), description = "\n", color = 0xff6633)
-            embed.set_image(url = member.avatar_url)
+        async def avatar(ctx, member: Optional[Member]):
+            print(type(member))
+            if member == None:
+                await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
+                user = ctx.message.author
+            elif member != None:
+                user = member
+                if type(user) != discord.Member:
+                    await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
+                    return
+            else:
+                user = ctx.guild.get_member_named(member)
+                if user != discord.Member:
+                    await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
+                    return
+            embed = discord.Embed(title = "{0}'s avatar".format(user), description = "\n", color = 0xff6633)
+            embed.set_image(url = user.avatar_url)
             await ctx.send(embed = embed)
 
         @bot.command()
@@ -22,11 +37,15 @@ class Functions(commands.Cog):
             embed = discord.Embed(title = "{0} Server Stats".format(ctx.guild), description = "\n", color = 0xff6633)
             embed.add_field(name = "Server ID:", value = server.id, inline = True)
             embed.add_field(name = "Members:", value = server.member_count, inline = True)
-            embed.add_field(name = "Owner", value = ctx.guild.owner, inline = True)
+            embed.add_field(name = "Owner", value = server.owner, inline = True)
             embed.add_field(name = "Channels:", value = len(server.channels), inline = True)
             embed.add_field(name = "Roles:", value = len(server.roles), inline = True)
             embed.add_field(name = "Created on:", value = server.created_at.strftime("%A, %B %d %Y"), inline = True)
-            embed.add_field(name = "Bot Role:", value = server.self_role, inline = True)
+            try:
+                embed.add_field(name = "Bot Role:", value = server.self_role.mention, inline = True)
+            except:
+                embed.add_field(name = "Bot Role:", value = "None", inline = True)
+            embed.add_field(name = "Banned members", value = len(await server.bans()), inline = True)
             embed.set_thumbnail(url = server.icon_url)
             await ctx.send(embed = embed)
 
@@ -78,47 +97,38 @@ class Functions(commands.Cog):
 
         #info on user
         @bot.command(aliases = ["a"])
-        async def about(ctx, member: discord.Member):
-            embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0xff6633)
-            embed.add_field(name = "Name:", value = member.name, inline = True)
-            embed.add_field(name = "User ID:", value = member.id, inline = True)
-            embed.add_field(name = "Highest Role:", value = member.top_role.mention)
-            embed.add_field(name = "Created Account:", value = member.created_at.strftime("%A, %B %d %Y"))
-            embed.add_field(name = "Joined Server:", value = member.joined_at.strftime("%A, %B, %d %Y"))
-            embed.add_field(name = "Has Nitro:", value = bool(member.premium_since))
-            embed.set_thumbnail(url = member.avatar_url)
+        async def about(ctx, member: Optional[Member]):
+            print(type(member))
+            if member == None:
+                await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
+                user = ctx.message.author
+            elif member != None:
+                user = member
+                if type(user) != discord.Member:
+                    await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
+                    return
+            else:
+                user = ctx.guild.get_member_named(member)
+                if user != discord.Member:
+                    await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
+                    return
+
+            embed = discord.Embed(title = "{0}".format(user), description = "User information:", color = 0xff6633)
+            embed.add_field(name = "Name:", value = user.name, inline = True)
+            embed.add_field(name = "User ID:", value = user.id, inline = True)
+            embed.add_field(name = "Highest Role:", value = user.top_role.mention)
+            embed.add_field(name = "Created Account:", value = user.created_at.strftime("%A, %B %d %Y"))
+            embed.add_field(name = "Joined Server:", value = user.joined_at.strftime("%A, %B, %d %Y"))
+            embed.add_field(name = "Has Nitro:", value = bool(user.premium_since))
+            embed.set_thumbnail(url = user.avatar_url)
             await ctx.send(embed = embed)
 
-        #too lazy to make this a callable function
         @about.error
-        async def fail(ctx, error):
-            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                member = ctx.message.author
-                embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0xff6633)
-                embed.add_field(name = "Name:", value = member.name, inline = True)
-                embed.add_field(name = "User ID:", value = member.id, inline = True)
-                embed.add_field(name = "Highest Role:", value = member.top_role.mention)
-                embed.add_field(name = "Created Account:", value = member.created_at.strftime("%A, %B %d %Y"))
-                embed.add_field(name = "Joined Server:", value = member.joined_at.strftime("%A, %B, %d %Y"))
-                embed.add_field(name = "Has Nitro:", value = bool(member.premium_since))
-                embed.set_thumbnail(url = member.avatar_url)
-                await ctx.send(embed = embed)
-            else:
-                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000))
-
         @avatar.error
         async def incorrect(ctx, error):
-            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                member = ctx.message.author
-                embed = discord.Embed(title = "{0}'s avatar".format(member), description = "\n", color = 0xff6633)
-                embed.set_image(url = member.avatar_url)
-                await ctx.send(embed = embed)
-                #embed = discord.Embed(title = ":x: Error", description = "You did not include a user!", color = 0xff0000)
-                #await ctx.send(embed = embed)
-            else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
-                print(error)
+            embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
+            await ctx.send(embed = embed)
+            print(error)
 
         @bot.command(aliases = ["ei"])
         async def eightball(ctx, question):
