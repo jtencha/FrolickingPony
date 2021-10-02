@@ -26,6 +26,7 @@ class Functions(commands.Cog):
             embed.add_field(name = "Channels:", value = len(server.channels), inline = True)
             embed.add_field(name = "Roles:", value = len(server.roles), inline = True)
             embed.add_field(name = "Created on:", value = server.created_at.strftime("%A, %B %d %Y"), inline = True)
+            embed.add_field(name = "Bot Role:", value = server.self_role, inline = True)
             embed.set_thumbnail(url = server.icon_url)
             await ctx.send(embed = embed)
 
@@ -88,11 +89,32 @@ class Functions(commands.Cog):
             embed.set_thumbnail(url = member.avatar_url)
             await ctx.send(embed = embed)
 
+        #too lazy to make this a callable function
         @about.error
+        async def fail(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                member = ctx.message.author
+                embed = discord.Embed(title = "{0}".format(member), description = "User information:", color = 0xff6633)
+                embed.add_field(name = "Name:", value = member.name, inline = True)
+                embed.add_field(name = "User ID:", value = member.id, inline = True)
+                embed.add_field(name = "Highest Role:", value = member.top_role.mention)
+                embed.add_field(name = "Created Account:", value = member.created_at.strftime("%A, %B %d %Y"))
+                embed.add_field(name = "Joined Server:", value = member.joined_at.strftime("%A, %B, %d %Y"))
+                embed.add_field(name = "Has Nitro:", value = bool(member.premium_since))
+                embed.set_thumbnail(url = member.avatar_url)
+                await ctx.send(embed = embed)
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000))
+
         @avatar.error
         async def incorrect(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                embed = discord.Embed(title = ":x: Error", description = "You did not include a user!", color = 0xff0000)
+                member = ctx.message.author
+                embed = discord.Embed(title = "{0}'s avatar".format(member), description = "\n", color = 0xff6633)
+                embed.set_image(url = member.avatar_url)
+                await ctx.send(embed = embed)
+                #embed = discord.Embed(title = ":x: Error", description = "You did not include a user!", color = 0xff0000)
+                #await ctx.send(embed = embed)
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)

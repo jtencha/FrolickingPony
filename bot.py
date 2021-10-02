@@ -9,7 +9,7 @@ token = os.environ['bottoken']
 prefix = "?"
 
 intents = discord.Intents.default()
-intents = discord.Intents(messages = True, guilds = True)
+intents = discord.Intents(messages = True, guilds = True, members = True)
 
 
 bot = commands.Bot(command_prefix = prefix, intents = intents)
