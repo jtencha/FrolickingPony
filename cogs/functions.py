@@ -7,6 +7,9 @@ import asyncio
 import random
 from typing import Optional
 
+timedOut = []
+suggestBlocked = []
+
 class Functions(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -14,6 +17,11 @@ class Functions(commands.Cog):
         @bot.command(aliases = ["av"])
         async def avatar(ctx, member: Optional[Member]):
             print(type(member))
+            #stupid async await
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             if member == None:
                 await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
                 user = ctx.message.author
@@ -33,6 +41,10 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def stats(ctx):
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             server = ctx.guild
             embed = discord.Embed(title = "{0} Server Stats".format(ctx.guild), description = "\n", color = 0xff6633)
             embed.add_field(name = "Server ID:", value = server.id, inline = True)
@@ -68,6 +80,10 @@ class Functions(commands.Cog):
         @bot.command(aliases = ["p"])
         @bot_has_permissions(manage_messages = True)
         async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             embed = discord.Embed(title = "Poll Created by {0}".format(ctx.message.author), description = "\n", color = 0xff6633)
             embed.add_field(name = "1️⃣ Option One:", value = "{0}".format(option_one), inline = False)
             embed.add_field(name = "2️⃣ Option Two:", value = "{0}".format(option_two), inline = False)
@@ -98,7 +114,11 @@ class Functions(commands.Cog):
         #info on user
         @bot.command(aliases = ["a"])
         async def about(ctx, member: Optional[Member]):
-            print(type(member))
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
+
             if member == None:
                 await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
                 user = ctx.message.author
@@ -132,6 +152,10 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["ei"])
         async def eightball(ctx, question):
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so", "Sussy", "Kinda sus not gonna lie"]
             await ctx.send(random.choice(choices))
 
@@ -145,6 +169,10 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["e"])
         async def embed(ctx, title, *, message = "\n"):
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             embed = discord.Embed(title = title, description = message, color = 0xff6633)
             embed.set_author(name = "{0}".format(ctx.message.author), icon_url = ctx.message.author.avatar_url)
             await ctx.message.delete()
@@ -152,13 +180,24 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def sourcecode(ctx):
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/FamiliarNameMissing/RoboticPony", color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["su"])
-        @commands.cooldown(1, 300, commands.BucketType.user)
         async def suggest(ctx, *, message):
             try:
+                if ctx.message.author.id in suggestBlocked:
+                    embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                    await ctx.send(embed = embed)
+                    return
+                elif ctx.message.author.id in timedOut:
+                    embed = discord.Embed(title = ":x: Error", description = "You are still on cooldown for this command!", color = 0xff0000)
+                    await ctx.send(embed = embed)
+                    return
                 embed = discord.Embed(title = "Contact Developer", description = "Abuse will result in a ban from this command.", color = 0xff0000)
                 embed.add_field(name = 'Are you sure that you want to send this message to the developer? Respond with "CONFIRM" (case sensitive).', value = "Your message: {0}".format(message))
                 msg = await ctx.send(embed = embed)
@@ -169,21 +208,52 @@ class Functions(commands.Cog):
                         return msg.content == "CONFIRM"
 
                 await bot.wait_for("message", check = check)
-                embed = discord.Embed(title = "Suggestion by {0} from {1}:".format(ctx.message.author, ctx.guild), description = "{0}".format(message), color = 0xff6633)
+                embed = discord.Embed(title = "Suggestion by {0} ({1}) from {2}:".format(ctx.message.author, ctx.message.author.id, ctx.guild), description = "{0}".format(message), color = 0xff6633)
                 channel = bot.get_channel(890432795342696488)
                 await channel.send(embed = embed)
                 embed = discord.Embed(title = "Suggestion Sent", description = ":white_check_mark: Your suggestion has been sent to the developer.", color = 0x009933)
                 await ctx.send(embed = embed)
+                timedOut.append(ctx.message.author.id)
+                await asyncio.sleep(3600)
+                timeOut.remove(ctx.message.author.id)
 
             except TypeError:
                 embed = discord.Embed(title = "Suggestion Terminated", description = ":x: Your suggestion has successfully been terminated.", color = 0xff0000)
                 await ctx.send(embed = embed)
 
+        @bot.command(aliases = ["bl"])
+        async def blacklist(ctx, member: discord.Member):
+            if str(ctx.message.author.id) == str("687081333876719740"):
+                if member.id in suggestBlocked:
+                    await ctx.send(embed = discord.Embed(title = ":x: Error", description = "This user is already blacklisted.", color = 0xff0000))
+                    return
+                else:
+                    suggestBlocked.append(member.id)
+                    embed = discord.Embed(title = "User blacklisted", description = ":white_check_mark: {0} has been banned from using this bot.".format(member.id), color = 0x009933)
+                    await ctx.send(embed = embed)
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+                return
+
+        @bot.command(aliases = ["ubl"])
+        async def unblacklist(ctx, member: discord.Member):
+            if str(ctx.message.author.id) == str("687081333876719740"):
+                if member.id not in suggestBlocked:
+                    await ctx.send(embed = discord.Embed(title = ":x: Error", description = "This user is not blacklisted.", color = 0xff0000))
+                    return
+                else:
+                    suggestBlocked.remove(member.id)
+                    embed = discord.Embed(title = "User blacklisted", description = ":white_check_mark: {0} is now allowed to use this bot.".format(member.id), color = 0x009933)
+                    await ctx.send(embed = embed)
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+                return
 
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You need to give me at least a title to embed!", color = 0xff0000)
+                await ctx.send(embed = embed)
             else:
                 await ctx.send("`{0}`".format(error))
 
@@ -192,8 +262,15 @@ class Functions(commands.Cog):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You did not give me a suggestion!", color = 0xff0000)
                 await ctx.send(embed = embed)
-            elif isinstance(error, commands.CommandOnCooldown):
-                embed = discord.Embed(title = ":x: Error", description = "This command is currently on cooldown. It will be avalible in {0} seconds.".format(round(error.retry_after, 2)), color = 0xff0000)
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
+
+        @blacklist.error
+        @unblacklist.error
+        async def blackError(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                embed = discord.Embed(title = ":x: Error", description = "You did not give me a user to blacklist!", color = 0xff0000)
                 await ctx.send(embed = embed)
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
