@@ -156,6 +156,7 @@ class Functions(commands.Cog):
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["su"])
+        @commands.cooldown(1, 300, commands.BucketType.user)
         async def suggest(ctx, *, message):
             try:
                 embed = discord.Embed(title = "Contact Developer", description = "Abuse will result in a ban from this command.", color = 0xff0000)
@@ -190,6 +191,10 @@ class Functions(commands.Cog):
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You did not give me a suggestion!", color = 0xff0000)
+                await ctx.send(embed = embed)
+            elif isinstance(error, commands.CommandOnCooldown):
+                embed = discord.Embed(title = ":x: Error", description = "This command is currently on cooldown. It will be avalible in {0} seconds.".format(round(error.retry_after, 2)), color = 0xff0000)
+                await ctx.send(embed = embed)
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
