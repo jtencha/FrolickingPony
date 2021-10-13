@@ -74,7 +74,7 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["i"])
         async def invite(ctx):
-            embed = discord.Embed(title = "Invite RoboticPony", url = "https://discord.com/api/oauth2/authorize?client_id=834799912507277312&permissions=244239027318&scope=bot", description = "Invite the bot with the link above!", color = 0xff6633)
+            embed = discord.Embed(title = "Invite FrolickingPony", url = "https://discord.com/api/oauth2/authorize?client_id=834799912507277312&permissions=244239027318&scope=bot", description = "Invite the bot with the link above!", color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["p"])
@@ -215,7 +215,7 @@ class Functions(commands.Cog):
                 await ctx.send(embed = embed)
                 timedOut.append(ctx.message.author.id)
                 await asyncio.sleep(3600)
-                timeOut.remove(ctx.message.author.id)
+                timedOut.remove(ctx.message.author.id)
 
             except TypeError:
                 embed = discord.Embed(title = "Suggestion Terminated", description = ":x: Your suggestion has successfully been terminated.", color = 0xff0000)

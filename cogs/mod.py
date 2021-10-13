@@ -25,7 +25,7 @@ class ModCommands(commands.Cog):
             else:
                 raise ValueError
 
-        def standardError(error):
+        def standardCommandlineError(error):
             embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
             return embed
 
@@ -343,9 +343,10 @@ class ModCommands(commands.Cog):
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Missing an Argument", description = "Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`", color = 0xff0000))
-
+            elif isinstance(error, discord.ext.commands.BadArgument):
+                await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
             else:
-                await ctx.send(embed = standardError(error))
+                await ctx.send(embed = standardCommandlineError(error))
 
 
         @unban.error
@@ -353,9 +354,9 @@ class ModCommands(commands.Cog):
             if isinstance(error, discord.ext.commands.BadArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Bad Argument Error", description = "This command does not accept mentions. Please use an ID.", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
-                await ctx.send(embed = discord.Embed(title = ":x: Execute Error", description = "This user is not banned from this server.", color = 0xff0000))
+                await ctx.send(embed = discord.Embed(title = ":x: Executuion Error", description = "This user is not banned from this server.", color = 0xff0000))
             else:
-                await ctx.send(embed = standardError(error))
+                await ctx.send(embed = standardCommandlineError(error))
 
         #return an error if something wonky happened
         @kick.error
@@ -370,7 +371,7 @@ class ModCommands(commands.Cog):
             elif isinstance(error, discord.ext.commands.BadArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
             else:
-                await ctx.send(embed = standardError(error))
+                await ctx.send(embed = standardCommandlineError(error))
 
 def setup(bot):
     bot.add_cog(ModCommands(bot))

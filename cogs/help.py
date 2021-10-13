@@ -20,12 +20,18 @@ class Help(commands.Cog):
         #plug and chug into the function above
         @bot.command(aliases = ["h"])
         async def help(ctx, type = "1"):
+            from cogs.functions import suggestBlocked
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
+
             if type == "1":
                 embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.5\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.5.1\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -83,6 +89,8 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("blacklist", "Ban a user from using the bot.", "`blacklist [member]`", "Send messages (owner only)"))
             elif type == "unblacklist":
                 await ctx.send(embed = help_template("unblacklist", "Allow a banned user to use the bot.", "`unblacklist [member]`", "Send messages (owner only)"))
+            elif type == "gibamdib":
+                await ctx.send(embed = help_template("gibamdib", "Gib amdib role wo", "`gibamdib` (remove)", "Manage roles, send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 

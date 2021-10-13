@@ -12,6 +12,11 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def guetzali(ctx):
+            from cogs.functions import suggestBlocked
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             await ctx.send(random.choice(["Guetzali Guetzali",
             "https://media.discordapp.net/attachments/842447676414361620/843713059033710632/60a1f6f95aa22378467759.gif",
             "https://media.discordapp.net/attachments/404803931227553802/860570669322469377/quetzali.gif",
@@ -22,6 +27,11 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def amogus(ctx):
+            from cogs.functions import suggestBlocked
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             embed = discord.Embed(title = random.choice(["Sus", "Sussy", "AMOGUS", "I love amogus", "{0} is sus".format(ctx.message.author)]), description = "\n", color = 0xff6633)
             embed.set_image(url = random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
             "https://c.tenor.com/k_H-Sf-5D8IAAAAd/sus-amogus.gif",
@@ -31,6 +41,11 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def redpanda(ctx):
+            from cogs.functions import suggestBlocked
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
             embed = discord.Embed(title = "Red Panda, My Beloved", description = "\n", color = 0xff6633)
             embed.set_image(url = random.choice(["https://cdn.discordapp.com/avatars/825212502978723861/c94bd91c4e02b1c9600418e7f8631157.png",
             "https://cdn.discordapp.com/attachments/866857228833128449/891099004446842880/redpanda.png",
@@ -42,8 +57,57 @@ class Epic(commands.Cog):
             "https://cdn.discordapp.com/attachments/866857228833128449/891100587259740190/OIP.png",
             "https://cdn.discordapp.com/attachments/866857228833128449/891100785260265502/red-pandas-cincinnati-zoo-3.png",
             "https://cdn.discordapp.com/attachments/866857228833128449/891101059190247444/OIP.png"
+            "https://www.thoughtco.com/thmb/s-sGgR7zQSq2tZlZMlD7uuY81Gk=/7360x4912/filters:fill(auto,1)/happy-red-panda-171399380-5b574325c9e77c005b690b41.jpg"
+
             ]))
             await ctx.send(embed = embed)
+
+        #I hate await async behavior so goddamn much
+        #command developed for polyeggia server, per request
+        @bot.command()
+        async def gibamdib(ctx, status = None):
+            from cogs.functions import suggestBlocked
+            server = ctx.guild
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
+            try:
+                amdib = discord.utils.get(ctx.message.author.guild.roles, name = "Def Real Amdib")
+                if not amdib:
+                    amdibrole = await server.create_role(name = "Def Real Amdib", permissions = discord.Permissions(mute_members = True, send_messages = True))
+                    for channel in ctx.guild.channels:
+                        locked = channel.overwrites_for(amdibrole)
+                        locked.mute_members = True
+                        await channel.set_permissions(amdibrole, overwrite = locked)
+                        await ctx.send("Configured. Re-run the command.")
+                        return
+                elif status == "remove" and amdib in ctx.message.author.roles:
+                    await ctx.message.author.remove_roles(amdib)
+                    await ctx.send("You are not amdib anymore rib")
+                    return
+                elif status == "remove" and amdib not in ctx.message.author.roles:
+                    await ctx.send("You can't remove a role you don't have...")
+                    return
+                elif amdib not in ctx.message.author.roles:
+                    await ctx.message.author.add_roles(amdib)
+                    await ctx.send('You are now amdib wo. Use "?gibamdib remove" to resign.')
+                    await ctx.send("<:pandaqop:891098560387510272>")
+                    return
+                elif amdib in ctx.message.author.roles:
+                    await ctx.send("You are already amdib eggs d")
+                    return
+                else:
+                    embed = discord.Embed(title = ":x: Error", description = "You aren't supposed to get here", color = 0xff0000)
+                    await ctx.send(embed = embed)
+                    return
+            except discord.Forbidden:
+                await ctx.send(embed = discord.Embed(title = ":x: Executuion Error", description = "An error occurred while running this command. The most likely cause is that you have a higher role than the bot.", color = 0xff0000))
+                return
+
+        @gibamdib.error
+        async def amdibError(ctx, error):
+            await ctx.send(embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000))
 
 def setup(bot):
     bot.add_cog(Epic(bot))
