@@ -184,7 +184,7 @@ class Functions(commands.Cog):
                 embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
                 await ctx.send(embed = embed)
                 return
-            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/jtencha/boot", color = 0xff6633)
+            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/FamiliarNameMissing/RoboticPony", color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["su"])
@@ -243,8 +243,18 @@ class Functions(commands.Cog):
                     return
                 else:
                     suggestBlocked.remove(member.id)
-                    embed = discord.Embed(title = "User blacklisted", description = ":white_check_mark: {0} is now allowed to use this bot.".format(member.id), color = 0x009933)
+                    embed = discord.Embed(title = "User unblacklisted", description = ":white_check_mark: {0} is now allowed to use this bot.".format(member.id), color = 0x009933)
                     await ctx.send(embed = embed)
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+                return
+
+        @bot.command(aliases = ["lbl"])
+        async def listblacklist(ctx):
+            if str(ctx.message.author.id) == str("687081333876719740"):
+                for member in suggestBlocked:
+                    await ctx.send(member)
+                return
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
                 return
