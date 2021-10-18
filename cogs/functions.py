@@ -184,7 +184,7 @@ class Functions(commands.Cog):
                 embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
                 await ctx.send(embed = embed)
                 return
-            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/crw2e/RoboticPony", color = 0xff6633)
+            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/jtencha/boot", color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["su"])
