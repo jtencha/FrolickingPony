@@ -37,7 +37,7 @@ class Epic(commands.Cog):
             "https://c.tenor.com/k_H-Sf-5D8IAAAAd/sus-amogus.gif",
             "https://media.discordapp.net/attachments/547864105046769676/886434964479029279/de65d757-bbd8-4e7e-b0c7-7ac35d148b14.gif",
             "https://c.tenor.com/XhYqu5fu4LgAAAAd/boiled-soundcloud-boiled.gif",
-            "https/media.discordapp.net/attachments/854081705496412180/898367828674113606/amogus-usa.gif"]))
+            "https://images-ext-2.discordapp.net/external/NzwN2rQSZUejBtxqPh2D9HmNxygXA6kb22GjkFqAQ9o/https/media.discordapp.net/attachments/854081705496412180/898367828674113606/amogus-usa.gif"]))
             msg = await ctx.send(embed = embed)
 
         @bot.command()
