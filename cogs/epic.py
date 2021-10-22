@@ -110,5 +110,33 @@ class Epic(commands.Cog):
         async def amdibError(ctx, error):
             await ctx.send(embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000))
 
+        @bot.command(aliases = ["im"])
+        async def impersonate(ctx, member: discord.Member, *, message = None):
+            from cogs.functions import suggestBlocked
+            server = ctx.guild
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
+            if message == None:
+                await ctx.send("You need to say something!")
+                return
+            else:
+                await ctx.message.delete()
+                webhook = await ctx.channel.create_webhook(name=member.name)
+                await webhook.send(str(message), username = member.name, avatar_url = member.avatar_url)
+
+            #webhooks = await ctx.channel.webhooks()
+            #for webhook in webhooks:
+                    #await webhook.delete()
+
+        @impersonate.error
+        async def impError(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include a user to impersonate!", color = 0xff0000))
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
+
 def setup(bot):
     bot.add_cog(Epic(bot))
