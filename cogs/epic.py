@@ -123,17 +123,16 @@ class Epic(commands.Cog):
                 return
             else:
                 await ctx.message.delete()
-                webhook = await ctx.channel.create_webhook(name=member.name)
+                webhook = await ctx.channel.create_webhook(name = member.name)
                 await webhook.send(str(message), username = member.name, avatar_url = member.avatar_url)
-
-            #webhooks = await ctx.channel.webhooks()
-            #for webhook in webhooks:
-                    #await webhook.delete()
+                await webhook.delete()
 
         @impersonate.error
         async def impError(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include a user to impersonate!", color = 0xff0000))
+            if isinstance(error, discord.ext.commands.InvalidArgument):
+                pass
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
