@@ -338,6 +338,38 @@ class ModCommands(commands.Cog):
                 await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
                 return
 
+        @bot.command(aliases = ["c"])
+        async def clear(ctx, messages):
+            if ctx.author.guild_permissions.manage_messages:
+                try:
+                    messages = int(messages)
+                except:
+                    await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = messages + " is not a number.", color = 0xff0000))
+                    return
+
+                if messages > 50:
+                    await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = "You can only clear up to 50 messages at a time.", color = 0xff0000))
+                    return
+
+                await ctx.message.delete()
+                async for message in ctx.message.channel.history(limit = messages):
+                    await message.delete()
+
+                await ctx.send(embed = discord.Embed(title = ":white_check_mark: Successfully cleared {0} messages".format(messages), description = "Action completed by {0}".format(ctx.message.author), color = 0x009933))
+
+                return
+
+            else:
+                await ctx.send("You don't have permission to run this command!")
+
+        @clear.error
+        async def clearError(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send(embed = discord.Embed(title = ":x: Missing an Argument", description = "A certain number of messages to clear must be provided.", color = 0xff0000))
+            else:
+                await ctx.send(embed = standardCommandlineError(error))
+
+
         #detailed error return- it's a wonky command
         @setnick.error
         async def fail(ctx, error):
