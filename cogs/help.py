@@ -31,7 +31,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.5.4\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.5.5\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -96,7 +96,7 @@ class Help(commands.Cog):
             elif type == "impersonate":
                 await ctx.send(embed = help_template("impersonate", "Impersonate a user of your choosing", "`impersonate [user] [message]`", "Manage webhooks, send messages"))
             elif type == "clear":
-                await ctx.send(embed = help_template("clear", "Clear x messages in a channel", "`clear [number]`", "Manage messages"))
+                await ctx.send(embed = help_template("clear", "Clear x messages in a channel or clear messages from a certain user in the last x messages.", "`clear [number] (user)`", "Manage messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 
