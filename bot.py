@@ -43,6 +43,8 @@ async def reload(ctx):
 
         embed = discord.Embed(title = ":white_check_mark: Cogs successfully reloaded.", description = "\n", color = 0x009933)
         await ctx.send(embed = embed)
+        channel = bot.get_channel(909985698088620122)
+        await channel.send("-------------RELOADED-------------")
     else:
         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
 

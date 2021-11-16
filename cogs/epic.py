@@ -6,6 +6,8 @@ import os
 import asyncio
 import random
 
+optOut = []
+
 class Epic(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -37,7 +39,12 @@ class Epic(commands.Cog):
             "https://c.tenor.com/k_H-Sf-5D8IAAAAd/sus-amogus.gif",
             "https://media.discordapp.net/attachments/547864105046769676/886434964479029279/de65d757-bbd8-4e7e-b0c7-7ac35d148b14.gif",
             "https://c.tenor.com/XhYqu5fu4LgAAAAd/boiled-soundcloud-boiled.gif",
-            "https://images-ext-2.discordapp.net/external/NzwN2rQSZUejBtxqPh2D9HmNxygXA6kb22GjkFqAQ9o/https/media.discordapp.net/attachments/854081705496412180/898367828674113606/amogus-usa.gif"]))
+            "https://images-ext-2.discordapp.net/external/NzwN2rQSZUejBtxqPh2D9HmNxygXA6kb22GjkFqAQ9o/https/media.discordapp.net/attachments/854081705496412180/898367828674113606/amogus-usa.gif",
+            "https://c.tenor.com/FVnOj2hqoGkAAAAC/among-us-funny-dance.gif",
+            "https://c.tenor.com/UBSIHrmTLW0AAAAC/among-us-minecraft.gif",
+            "https://c.tenor.com/wEwQbVsYwlwAAAAM/hi.gif"
+            ]))
+
             msg = await ctx.send(embed = embed)
 
         @bot.command()
@@ -59,6 +66,7 @@ class Epic(commands.Cog):
             "https://cdn.discordapp.com/attachments/866857228833128449/891100785260265502/red-pandas-cincinnati-zoo-3.png",
             "https://cdn.discordapp.com/attachments/866857228833128449/891101059190247444/OIP.png"
             "https://www.thoughtco.com/thmb/s-sGgR7zQSq2tZlZMlD7uuY81Gk=/7360x4912/filters:fill(auto,1)/happy-red-panda-171399380-5b574325c9e77c005b690b41.jpg"
+
 
             ]))
             await ctx.send(embed = embed)
@@ -118,7 +126,10 @@ class Epic(commands.Cog):
                 embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
                 await ctx.send(embed = embed)
                 return
-            if message == None:
+            elif member.id in optOut:
+                await ctx.send("This user has opted out of impersonations.")
+                return
+            elif message == None:
                 await ctx.send("You need to say something!")
                 return
             else:
@@ -127,14 +138,30 @@ class Epic(commands.Cog):
                 await webhook.send(str(message), username = member.name, avatar_url = member.avatar_url)
                 await webhook.delete()
 
+        @bot.command()
+        async def block(ctx):
+            from cogs.functions import suggestBlocked
+
+            if ctx.message.author.id in suggestBlocked:
+                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+                await ctx.send(embed = embed)
+                return
+            elif ctx.message.author.id not in optOut:
+                optOut.append(ctx.message.author.id)
+                embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will not be able to mimic you.", color =  0x009933)
+                await ctx.send(embed = embed)
+            else:
+                optOut.remove(ctx.message.author.id)
+                embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will now be able to mimic you.", color =  0x009933)
+                await ctx.send(embed = embed)
+
         @impersonate.error
+        @block.error
         async def impError(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include a user to impersonate!", color = 0xff0000))
-            if isinstance(error, discord.ext.commands.InvalidArgument):
-                pass
             else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
 
 def setup(bot):

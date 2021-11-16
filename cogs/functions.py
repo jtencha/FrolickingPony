@@ -231,6 +231,8 @@ class Functions(commands.Cog):
                     suggestBlocked.append(member.id)
                     embed = discord.Embed(title = "User blacklisted", description = ":white_check_mark: {0} has been banned from using this bot.".format(member.id), color = 0x009933)
                     await ctx.send(embed = embed)
+                    channel = bot.get_channel(909985698088620122)
+                    await channel.send(embed = embed)
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
                 return
@@ -243,8 +245,10 @@ class Functions(commands.Cog):
                     return
                 else:
                     suggestBlocked.remove(member.id)
-                    embed = discord.Embed(title = "User unblacklisted", description = ":white_check_mark: {0} is now allowed to use this bot.".format(member.id), color = 0x009933)
+                    embed = discord.Embed(title = "User unblacklisted", description = ":white_check_mark: {0} is unblacklisted.".format(member.id), color = 0x009933)
                     await ctx.send(embed = embed)
+                    channel = bot.get_channel(909985698088620122)
+                    await channel.send(embed = embed)
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
                 return
