@@ -5,6 +5,7 @@ from discord import Member
 import os
 import asyncio
 import random
+from bot import isBanned
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -20,10 +21,8 @@ class Help(commands.Cog):
         #plug and chug into the function above
         @bot.command(aliases = ["h"])
         async def help(ctx, type = "1"):
-            from cogs.functions import suggestBlocked
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
             if type == "1":
@@ -31,7 +30,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.6.5.6\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))

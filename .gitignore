@@ -2,3 +2,5 @@ secret.*
 __pycache__/
 poetry*
 pyproject*
+botbanned*
+impersonate*

@@ -5,8 +5,7 @@ from discord import Member
 import os
 import asyncio
 import random
-
-optOut = []
+from bot import *
 
 class Epic(commands.Cog):
     def __init__(self, bot):
@@ -14,11 +13,10 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def guetzali(ctx):
-            from cogs.functions import suggestBlocked
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+
             await ctx.send(random.choice(["Guetzali Guetzali",
             "https://media.discordapp.net/attachments/842447676414361620/843713059033710632/60a1f6f95aa22378467759.gif",
             "https://media.discordapp.net/attachments/404803931227553802/860570669322469377/quetzali.gif",
@@ -29,11 +27,10 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def amogus(ctx):
-            from cogs.functions import suggestBlocked
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+
             embed = discord.Embed(title = random.choice(["Sus", "Sussy", "AMOGUS", "I love amogus", "{0} is sus".format(ctx.message.author)]), description = "\n", color = 0xff6633)
             embed.set_image(url = random.choice(["https://media.discordapp.net/attachments/727291251308757113/864568490626777119/image0-2-1-1-1-1-1-1.gif",
             "https://c.tenor.com/k_H-Sf-5D8IAAAAd/sus-amogus.gif",
@@ -49,11 +46,10 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def redpanda(ctx):
-            from cogs.functions import suggestBlocked
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+
             embed = discord.Embed(title = "Red Panda, My Beloved", description = "\n", color = 0xff6633)
             embed.set_image(url = random.choice(["https://cdn.discordapp.com/avatars/825212502978723861/c94bd91c4e02b1c9600418e7f8631157.png",
             "https://cdn.discordapp.com/attachments/866857228833128449/891099004446842880/redpanda.png",
@@ -75,12 +71,11 @@ class Epic(commands.Cog):
         #command developed for polyeggia server, per request
         @bot.command()
         async def gibamdib(ctx, status = None):
-            from cogs.functions import suggestBlocked
             server = ctx.guild
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+
             try:
                 amdib = discord.utils.get(ctx.message.author.guild.roles, name = "Def Real Amdib")
                 if not amdib:
@@ -120,15 +115,17 @@ class Epic(commands.Cog):
 
         @bot.command(aliases = ["im"])
         async def impersonate(ctx, member: discord.Member, *, message = None):
-            from cogs.functions import suggestBlocked
-            server = ctx.guild
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
+            elif blocked(str(member.id)) != False:
+                #I had this as a function but I have no clue why it kept trying to convert this to a dict
+                #ALas, I love my functions but I go the long way for now
+                embed = discord.Embed(title = ":x: Error", description = "This user has opted out of impersonations.", color = 0xff0000)
                 await ctx.send(embed = embed)
                 return
-            elif member.id in optOut:
-                await ctx.send("This user has opted out of impersonations.")
-                return
+
             elif message == None:
                 await ctx.send("You need to say something!")
                 return
@@ -140,20 +137,29 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def block(ctx):
-            from cogs.functions import suggestBlocked
-
-            if ctx.message.author.id in suggestBlocked:
-                embed = discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-                await ctx.send(embed = embed)
+            if isBanned(str(ctx.message.author.id)) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
-            elif ctx.message.author.id not in optOut:
-                optOut.append(ctx.message.author.id)
-                embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will not be able to mimic you.", color =  0x009933)
-                await ctx.send(embed = embed)
+
             else:
-                optOut.remove(ctx.message.author.id)
-                embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will now be able to mimic you.", color =  0x009933)
-                await ctx.send(embed = embed)
+                with open("impersonate.txt", "r") as f:
+                    fl = f.readlines()
+                with open("impersonate.txt", "w") as f:
+                    isIn = False
+                    for l in fl:
+                        if l.strip("\n") in str(ctx.message.author.id):
+                            isIn = True
+
+                    if isIn == True:
+                        for x in fl:
+                            if x.strip("\n") != str(ctx.message.author.id):
+                                f.write(l)
+                        embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will now be able to mimic you.", color =  0x009933)
+                        await ctx.send(embed = embed)
+                    else:
+                        f.write(str(ctx.message.author.id) + "\n")
+                        embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will not be able to mimic you.", color =  0x009933)
+                        await ctx.send(embed = embed)
 
         @impersonate.error
         @block.error
