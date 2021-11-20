@@ -21,8 +21,8 @@ class Functions(commands.Cog):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+
             if member == None:
-                await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
                 user = ctx.message.author
             elif member != None:
                 user = member
@@ -117,7 +117,6 @@ class Functions(commands.Cog):
                 return
 
             if member == None:
-                await ctx.send(embed = discord.Embed(title = ":x: No member provided/Member not found.", color = 0xff0000))
                 user = ctx.message.author
             elif member != None:
                 user = member

@@ -18,7 +18,7 @@ intents = discord.Intents(messages = True, guilds = True, members = True)
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
-def isBanned(id, type):
+def isBanned(id, type = 1):
     if type == 1:
         with open("botbanned.txt", "r") as f:
             if id in f.read():

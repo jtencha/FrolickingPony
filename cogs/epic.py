@@ -119,7 +119,7 @@ class Epic(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
-            if isBanned(str(member.id), 2) != False:
+            elif isBanned(str(member.id), 2) != False:
                 #I had this as a function but I have no clue why it kept trying to convert this to a dict
                 #ALas, I love my functions but I go the long way for now
                 embed = discord.Embed(title = ":x: Error", description = "This user has opted out of impersonations.", color = 0xff0000)
@@ -142,24 +142,25 @@ class Epic(commands.Cog):
                 return
 
             else:
+                count = 0
                 with open("impersonate.txt", "r") as f:
                     fl = f.readlines()
-                with open("impersonate.txt", "a+") as f:
-                    isIn = False
+                with open("impersonate.txt", "w") as f:
                     for l in fl:
-                        if l.strip("\n") in str(ctx.message.author.id):
-                            isIn = True
+                        if l.strip("\n") != str(ctx.message.author.id):
+                            f.write(l)
+                        else:
+                            count += 1
 
-                    if isIn == True:
-                        for x in fl:
-                            if x.strip("\n") != str(ctx.message.author.id):
-                                f.write(l + "\n")
-                        embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will now be able to mimic you.", color =  0x009933)
-                        await ctx.send(embed = embed)
-                    else:
+                if count == 0:
+                    with open("impersonate.txt", "a+") as f:
                         f.write(str(ctx.message.author.id) + "\n")
-                        embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will not be able to mimic you.", color =  0x009933)
-                        await ctx.send(embed = embed)
+                    await ctx.send(embed = discord.Embed(title = ":white_check_mark: Block Successful", description = "Users will not be able to mimic you.", color = 0x009933))
+                    return
+                else:
+                    embed = discord.Embed(title = ":white_check_mark: Unblock Successful", description = "Users will be able to mimic you.", color = 0x009933)
+                    await ctx.send(embed = embed)
+
 
         @impersonate.error
         @block.error
