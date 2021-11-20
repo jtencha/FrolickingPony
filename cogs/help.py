@@ -30,7 +30,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7.1\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))

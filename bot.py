@@ -18,19 +18,20 @@ intents = discord.Intents(messages = True, guilds = True, members = True)
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
-def isBanned(id):
-    with open("botbanned.txt", "r") as f:
-        if id in f.read():
-            return discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
-        else:
-            return False
+def isBanned(id, type):
+    if type == 1:
+        with open("botbanned.txt", "r") as f:
+            if id in f.read():
+                return discord.Embed(title = ":x: Error", description = "You are banned from using this bot!", color = 0xff0000)
+            else:
+                return False
+    elif type == 2:
+        with open("impersonate.txt", "r") as f:
+            if id in f.read():
+                return discord.Embed(title = ":x: Error", description = "This user has opted out of impersonations", color = 0xff0000)
+            else:
+                return False
 
-def blocked(id):
-    with open("impersonate.txt", "r") as f:
-        if id in f.read():
-            return discord.Embed(title = ":x: Error", description = "This user has opted out of impersonations.", color = 0xff0000)
-        else:
-            return False
 
 #Prints output to terminal if all is well
 @bot.event
