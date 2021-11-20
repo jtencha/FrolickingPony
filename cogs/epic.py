@@ -13,7 +13,7 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def guetzali(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -27,7 +27,7 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def amogus(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -46,7 +46,7 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def redpanda(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -72,7 +72,7 @@ class Epic(commands.Cog):
         @bot.command()
         async def gibamdib(ctx, status = None):
             server = ctx.guild
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -115,11 +115,11 @@ class Epic(commands.Cog):
 
         @bot.command(aliases = ["im"])
         async def impersonate(ctx, member: discord.Member, *, message = None):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
-            elif blocked(str(member.id)) != False:
+            if isBanned(str(member.id), 2) != False:
                 #I had this as a function but I have no clue why it kept trying to convert this to a dict
                 #ALas, I love my functions but I go the long way for now
                 embed = discord.Embed(title = ":x: Error", description = "This user has opted out of impersonations.", color = 0xff0000)
@@ -137,14 +137,14 @@ class Epic(commands.Cog):
 
         @bot.command()
         async def block(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
             else:
                 with open("impersonate.txt", "r") as f:
                     fl = f.readlines()
-                with open("impersonate.txt", "w") as f:
+                with open("impersonate.txt", "a+") as f:
                     isIn = False
                     for l in fl:
                         if l.strip("\n") in str(ctx.message.author.id):
@@ -153,7 +153,7 @@ class Epic(commands.Cog):
                     if isIn == True:
                         for x in fl:
                             if x.strip("\n") != str(ctx.message.author.id):
-                                f.write(l)
+                                f.write(l + "\n")
                         embed = discord.Embed(title = ":white_check_mark: Success", description = "Users will now be able to mimic you.", color =  0x009933)
                         await ctx.send(embed = embed)
                     else:

@@ -2,6 +2,9 @@ import os
 import discord
 from discord.ext import commands
 import stayinAlive
+import time
+
+starttime = time.time()
 
 token = os.environ['bottoken']
 
@@ -84,10 +87,27 @@ async def pack(ctx):
     else:
         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
 
+@bot.command()
+async def uptime(ctx):
+    if isBanned(str(ctx.message.author.id), 1) != False:
+        await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+        return
+
+    now = time.time()
+    s = now - starttime
+    m = int(s) // 60
+    s = s % 60
+    h = m // 60
+    m = m % 60
+    totaltime = "{0} hours {1} minutes {2} seconds".format(int(h), int(m), int(s))
+
+    await ctx.send(embed = discord.Embed(title = "Bot Uptime", description = "FrolickingPony has been online for " + str(totaltime), color = 0x009933))
+
 @reload.error
 @sleep.error
 @unpack.error
 @pack.error
+@uptime.error
 async def onError(ctx, error):
     await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
 

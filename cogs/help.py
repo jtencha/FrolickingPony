@@ -21,7 +21,7 @@ class Help(commands.Cog):
         #plug and chug into the function above
         @bot.command(aliases = ["h"])
         async def help(ctx, type = "1"):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -29,7 +29,7 @@ class Help(commands.Cog):
                 embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime`", inline = False)
                 embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
@@ -98,6 +98,8 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("clear", "Clear x messages in a channel or clear messages from a certain user in the last x messages.", "`clear [number] (user)`", "Manage messages"))
             elif type == "block":
                 await ctx.send(embed = help_template("block", "Block users from impersonating you.", "`block`", "Send messages"))
+            elif type == "uptime":
+                await ctx.send(embed = help_template("uptime", "Display uptime of the bot.", "`uptime`", "Send messages"))
             else:
                 await ctx.send("{0} is not a vaild command!.".format(type))
 

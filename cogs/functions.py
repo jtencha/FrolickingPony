@@ -18,7 +18,7 @@ class Functions(commands.Cog):
         async def avatar(ctx, member: Optional[Member]):
             print(type(member))
             #stupid async await
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             if member == None:
@@ -40,7 +40,7 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def stats(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             server = ctx.guild
@@ -78,7 +78,7 @@ class Functions(commands.Cog):
         @bot.command(aliases = ["p"])
         @bot_has_permissions(manage_messages = True)
         async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -112,7 +112,7 @@ class Functions(commands.Cog):
         #info on user
         @bot.command(aliases = ["a"])
         async def about(ctx, member: Optional[Member]):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
@@ -149,7 +149,7 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["ei"])
         async def eightball(ctx, question):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so", "Sussy", "Kinda sus not gonna lie"]
@@ -165,7 +165,7 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["e"])
         async def embed(ctx, title, *, message = "\n"):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             embed = discord.Embed(title = title, description = message, color = 0xff6633)
@@ -175,7 +175,7 @@ class Functions(commands.Cog):
 
         @bot.command()
         async def sourcecode(ctx):
-            if isBanned(str(ctx.message.author.id)) != False:
+            if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/jtencha/boot", color = 0xff6633)
@@ -184,7 +184,7 @@ class Functions(commands.Cog):
         @bot.command(aliases = ["su"])
         async def suggest(ctx, *, message):
             try:
-                if isBanned(str(ctx.message.author.id)) != False:
+                if isBanned(str(ctx.message.author.id), 1) != False:
                     await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                     return
                 elif ctx.message.author.id in timedOut:
