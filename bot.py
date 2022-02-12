@@ -18,6 +18,7 @@ intents = discord.Intents(messages = True, guilds = True, members = True)
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
+#check on entry
 def isBanned(id, type = 1):
     if type == 1:
         with open("botbanned.txt", "r") as f:
@@ -33,13 +34,13 @@ def isBanned(id, type = 1):
                 return False
 
 
-#Prints output to terminal if all is well
+#basic trigger stuff
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
     await bot.change_presence(activity = discord.Game("Going Insane | " + prefix + "help"))
 
-#Secret command wo
+#terminate bot
 @bot.command()
 async def sleep(ctx):
     owner_id = "687081333876719740"
@@ -50,6 +51,7 @@ async def sleep(ctx):
     else:
         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
 
+#reload files
 @bot.command()
 async def reload(ctx):
     owner_id = "687081333876719740"
@@ -61,11 +63,10 @@ async def reload(ctx):
 
         embed = discord.Embed(title = ":white_check_mark: Cogs successfully reloaded.", description = "\n", color = 0x009933)
         await ctx.send(embed = embed)
-        channel = bot.get_channel(909985698088620122)
-        await channel.send("-------------RELOADED-------------")
     else:
         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
 
+#manually reload in case something doesn't work
 @bot.command()
 async def unpack(ctx):
     owner_id = "687081333876719740"

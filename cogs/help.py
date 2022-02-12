@@ -28,9 +28,10 @@ class Help(commands.Cog):
             if type == "1":
                 embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
+                embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7.1\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 2.0\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -81,7 +82,7 @@ class Help(commands.Cog):
             elif type == "avatar":
                 await ctx.send(embed = help_template("avatar", "Display a member's avatar. Defaults to your own avatar.", "`avatar [member]`", "Send messages"))
             elif type == "redpanda":
-                await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:891098560387510272>", "`redpanda`", "Send messages, upload images"))
+                await ctx.send(embed = help_template("redpanda", "Redpanda <:pandaqop:942169694717239307>", "`redpanda`", "Send messages, upload images"))
             elif type == "stats":
                 await ctx.send(embed = help_template("stats", "Server stats", "`stats`", "Send messages"))
             elif type == "blacklist":
@@ -100,8 +101,16 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("block", "Block users from impersonating you.", "`block`", "Send messages"))
             elif type == "uptime":
                 await ctx.send(embed = help_template("uptime", "Display uptime of the bot.", "`uptime`", "Send messages"))
+            elif type == "work":
+                await ctx.send(embed = help_template("work", "Work for digital currency", "`work`", "Send messages"))
+            elif type == "balance":
+                await ctx.send(embed = help_template("balance", "View your balance for a server", "`balance`", "Send messages"))
+            elif type == "addmoney":
+                await ctx.send(embed = help_template("addmoney", "Add money to a user's bank account", "`addmoney [user] [amount]`", "Administrator"))
+            elif type == "removemoney":
+                await ctx.send(embed = help_template("removemoney", "Remove money from a user's bank account", "`removemoney [user] [amount]`", "Administrator"))
             else:
-                await ctx.send("{0} is not a vaild command!.".format(type))
+                await ctx.send("{0} is not a recognized command.".format(type))
 
 def setup(bot):
     bot.add_cog(Help(bot))

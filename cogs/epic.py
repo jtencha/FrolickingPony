@@ -96,7 +96,7 @@ class Epic(commands.Cog):
                 elif amdib not in ctx.message.author.roles:
                     await ctx.message.author.add_roles(amdib)
                     await ctx.send('You are now amdib wo. Use "?gibamdib remove" to resign.')
-                    await ctx.send("<:pandaqop:891098560387510272>")
+                    await ctx.send("<:pandaqop:942169694717239307>")
                     return
                 elif amdib in ctx.message.author.roles:
                     await ctx.send("You are already amdib eggs d")
@@ -106,7 +106,7 @@ class Epic(commands.Cog):
                     await ctx.send(embed = embed)
                     return
             except discord.Forbidden:
-                await ctx.send(embed = discord.Embed(title = ":x: Executuion Error", description = "An error occurred while running this command. The most likely cause is that you have a higher role than the bot.", color = 0xff0000))
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Executuion Error", description = "An error occurred while running this command. The most likely cause is that you have a higher role than the bot.", color = 0xff0000))
                 return
 
         @gibamdib.error
