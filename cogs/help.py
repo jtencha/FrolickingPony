@@ -27,11 +27,11 @@ class Help(commands.Cog):
 
             if type == "1":
                 embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
-                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `suggest`", inline = False)
+                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `changelog` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats`", inline = False)
                 embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney`")
-                embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `setnick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
+                embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 2.0\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.7.2\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -69,14 +69,12 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("pack", "Manually pack away all cogs", "`pack`", "Send messages (owner only)"))
             elif type == "nick":
                 await ctx.send(embed = help_template("nick", "Change a user's nickname - leave blank to reset", "`nickname [user] (nickname)`", "Manage nicknames"))
-            elif type == "setnick":
-                await ctx.send(embed = help_template("setnick", "Change a user's nickname for a set time and stop them from changing it.", "`setnick [user] [time] [nickname]`", "Manage nicknames, manage roles"))
             elif type == "amogus":
                 await ctx.send(embed = help_template("amogus", "Sussy command", "`amogus`", "Send Messages"))
             elif type == "sourcecode":
                 await ctx.send(embed = help_template("sourcecode", "Provides a link to the source code for this bot.", "`sourcecode`", "Send Messages"))
-            elif type == "suggest":
-                await ctx.send(embed = help_template("suggest", "Suggest feedback to bot developers.", "`suggest [message]`", "Send messages"))
+            elif type == "contact":
+                await ctx.send(embed = help_template("contact", "Contact the bot developers.", "`contact [message]`", "Send messages"))
             elif type == "tempban":
                 await ctx.send(embed = help_template("tempban", "Temporarily ban a member.", "`tempban [member] [time] (reason)`", "Ban Messages"))
             elif type == "avatar":

@@ -175,17 +175,17 @@ class Functions(commands.Cog):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
-            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/jtencha/boot", color = 0xff6633)
+            embed = discord.Embed(title = "Source code for RoboticPony:", description = "https://github.com/jtencha/FrolickingPony", color = 0xff6633)
             await ctx.send(embed = embed)
 
-        @bot.command(aliases = ["su"])
+        @bot.command(aliases = ["co"])
         @commands.cooldown(1, 3600, commands.BucketType.user)
-        async def suggest(ctx, *, message):
+        async def contact(ctx, *, message):
             try:
                 if isBanned(str(ctx.message.author.id), 1) != False:
                     await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                     return
-                embed = discord.Embed(title = "Contact Developer", description = "Abuse will result in a ban from this command.", color = 0xff0000)
+                embed = discord.Embed(title = "Contact Developer", description = "Abuse will result in a ban from this command/use of this bot.", color = 0xff0000)
                 embed.add_field(name = 'Are you sure that you want to send this message to the developer? Respond with "CONFIRM" (case sensitive).', value = "Your message: {0}".format(message))
                 msg = await ctx.send(embed = embed)
                 def check(msg):
@@ -198,7 +198,7 @@ class Functions(commands.Cog):
                 embed = discord.Embed(title = "Suggestion by {0} ({1}) from {2}:".format(ctx.message.author, ctx.message.author.id, ctx.guild), description = "{0}".format(message), color = 0xff6633)
                 channel = bot.get_channel(942166599710965831)
                 await channel.send(embed = embed)
-                embed = discord.Embed(title = "Suggestion Sent", description = ":white_check_mark: Your suggestion has been sent to the developer.", color = 0x009933)
+                embed = discord.Embed(title = "Message Sent", description = ":white_check_mark: Your suggestion has been sent to the developer.", color = 0x009933)
                 await ctx.send(embed = embed)
 
             except TypeError:
@@ -262,10 +262,10 @@ class Functions(commands.Cog):
             else:
                 await ctx.send("`{0}`".format(error))
 
-        @suggest.error
+        @contact.error
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                embed = discord.Embed(title = ":x: Error", description = "You did not give me a suggestion!", color = 0xff0000)
+                embed = discord.Embed(title = ":x: Error", description = "You did not provide a message!", color = 0xff0000)
                 await ctx.send(embed = embed)
             elif isinstance(error, commands.CommandOnCooldown):
                 time = int(round(error.retry_after, 0) / 60)

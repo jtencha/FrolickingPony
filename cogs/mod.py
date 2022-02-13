@@ -15,6 +15,10 @@ class ModCommands(commands.Cog):
                 popped = time.strip("d")
                 final = 60 * 60 * int(popped) * 24
                 return final
+            elif ("hr" in time):
+                popped = time.strip("hr")
+                final = 60 * 60 * int(popped)
+                return final
             elif ("h" in time):
                 popped = time.strip("h")
                 final = 60 * 60 * int(popped)
@@ -260,84 +264,6 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
 
-        #set a user's nickname as something for x amount of time
-        #assigns a role banning them fron changing their name
-        #won't work if the user has perms to manage other nicknames other than theirs
-        @bot.command(aliases = ["sn"])
-        @bot_has_permissions(manage_nicknames = True, manage_roles = True)
-        async def setnick(ctx, member: discord.Member, time, *, nickname = None):
-            if ctx.message.author.guild_permissions.manage_nicknames:
-                locknick = discord.utils.get(member.guild.roles, name = "Nickname Banned")
-                moderator = ctx.message.author
-                server = ctx.guild
-                if not locknick:
-                    locknick = await server.create_role(name = "Nickname Banned", permissions = discord.Permissions(change_nickname = False, read_messages = True), color = 0x555353)
-                    for channel in ctx.guild.channels:
-                        locked = channel.overwrites_for(locknick)
-                        locked.change_nickname = False
-                        await channel.set_permissions(locknick, overwrite = locked)
-                    await ctx.send("Configured role for lock.")
-
-                if moderator == member:
-                    await ctx.send("I don't think you want to do this...")
-                    return
-
-                elif nickname == None:
-                    await member.remove_roles(locknick)
-                    await ctx.send("{0}'s name has been unlocked.".format(member))
-                    await member.edit(nick = None)
-                    try:
-                        await member.send("Your nickname in {0} is now unlocked.".format(server))
-                    except:
-                        print("fail")
-
-                    return
-
-                elif len(nickname) > 32:
-                    await ctx.send("Nicknames must be shorter than 32 characters!")
-                    return
-
-                elif locknick in member.roles:
-                    await ctx.send("This user is already locked.")
-                    return
-
-                try:
-                    if ("h" in time):
-                        popped = time.strip("h")
-                        if int(popped) > 23:
-                            await ctx.send("Use d to set days")
-                            return
-                        final = 60 * 60 * int(popped)
-                        await member.add_roles(locknick)
-                        await member.edit(nick = nickname)
-                        await ctx.send("{0}'s named has been locked for {1} hours.".format(member, popped))
-                        await asyncio.sleep(final)
-                        await member.remove_roles(locknick)
-                        try:
-                            await member.send("Your nickname in {0} is now unlocked.".format(server))
-                        except:
-                            print("fail")
-                    elif ("d" in time):
-                        popped = time.strip("d")
-                        if int(popped) > 90:
-                            await ctx.send("You can only setnicks for 90 days, at most.")
-                            return
-                        final = 60 * 60 * int(popped) * 24
-                        await member.add_roles(locknick)
-                        await member.edit(nick = nickname)
-                        await ctx.send("{0}'s named has been locked for {1} days.".format(member, popped))
-                        await asyncio.sleep(final)
-                        try:
-                            await member.remove_roles(locknick)
-                            await member.send("Your nickname in {0} is now unlocked.".format(server))
-                        except:
-                            print("fail")
-                except ValueError:
-                    await ctx.send(embed = discord.Embed(title = ":x: Command Failed", description = time + "is not a valid length! Use ?help mute for a guideline.", color = 0xff0000))
-                    return
-            else:
-                await ctx.send(embed = discord.Embed(title = ":x: You don't have permission to run this command!", description = "\n", color = 0xff0000))
-                return
 
         @bot.command(aliases = ["c"])
         async def clear(ctx, messages, member: discord.Member = None):
@@ -376,22 +302,10 @@ class ModCommands(commands.Cog):
             else:
                 await ctx.send(embed = standardCommandlineError(error))
 
-
-        #detailed error return- it's a wonky command
-        @setnick.error
-        async def fail(ctx, error):
-            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send(embed = discord.Embed(title = ":x: Missing an Argument", description = "Missing a required field. Format is: `setnick [user] [time] (nickname) - leave the nickname blank to terminate the timer and reset nickname.`", color = 0xff0000))
-            elif isinstance(error, discord.ext.commands.BadArgument):
-                await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
-            else:
-                await ctx.send(embed = standardCommandlineError(error))
-
-
         @unban.error
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.BadArgument):
-                await ctx.send(embed = discord.Embed(title = ":x: Bad Argument Error", description = "This command does not accept mentions. Please use an ID.", color = 0xff0000))
+                await ctx.send(embed = discord.Embed(title = ":x: Bad Argument", description = "This command does not accept mentions. Please use an ID.", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
                 await ctx.send(embed = discord.Embed(title = ":x: Execution Error", description = "This user is not banned from this server.", color = 0xff0000))
             else:
