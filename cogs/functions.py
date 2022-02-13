@@ -195,14 +195,14 @@ class Functions(commands.Cog):
                         return msg.content == "CONFIRM"
 
                 await bot.wait_for("message", check = check)
-                embed = discord.Embed(title = "Suggestion by {0} ({1}) from {2}:".format(ctx.message.author, ctx.message.author.id, ctx.guild), description = "{0}".format(message), color = 0xff6633)
+                embed = discord.Embed(title = "Message by {0} ({1}) from {2}:".format(ctx.message.author, ctx.message.author.id, ctx.guild), description = "{0}".format(message), color = 0xff6633)
                 channel = bot.get_channel(942166599710965831)
                 await channel.send(embed = embed)
-                embed = discord.Embed(title = "Message Sent", description = ":white_check_mark: Your suggestion has been sent to the developer.", color = 0x009933)
+                embed = discord.Embed(title = "Message Sent", description = ":white_check_mark: Your message has been sent to the developer.", color = 0x009933)
                 await ctx.send(embed = embed)
 
             except TypeError:
-                embed = discord.Embed(title = "Suggestion Terminated", description = ":x: Your suggestion has successfully been terminated.", color = 0xff0000)
+                embed = discord.Embed(title = "Message Terminated", description = ":x: Your message has successfully been terminated.", color = 0xff0000)
                 await ctx.send(embed = embed)
 
         @bot.command(aliases = ["bl"])
