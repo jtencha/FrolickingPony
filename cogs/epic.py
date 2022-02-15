@@ -161,6 +161,30 @@ class Epic(commands.Cog):
                     embed = discord.Embed(title = ":white_check_mark: Unblock Successful", description = "Users will be able to mimic you.", color = 0x009933)
                     await ctx.send(embed = embed)
 
+        @bot.command()
+        async def ezmoney(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            else:
+                await ctx.send("https://c.tenor.com/b7jgsT3ctlwAAAAC/when-the-money-fast-money.gif")
+
+        @bot.command()
+        async def laugh(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            else:
+                await ctx.send("https://c.tenor.com/nbJLAkkQ4QQAAAAC/woody-laugh.gif")
+
+        @bot.command()
+        async def poor(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            else:
+                await ctx.send('https://c.tenor.com/oCxcur4d32wAAAAC/squidward-spare-change.gif')
+
 
         @impersonate.error
         @block.error

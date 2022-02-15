@@ -19,6 +19,10 @@ class Economy(commands.Cog):
         @bot.command()
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def work(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
             id = str(ctx.message.author.id)
             paycheck = random.choice([x for x in range(100, 300)])
             count = 0
@@ -76,6 +80,10 @@ class Economy(commands.Cog):
 
         @bot.command(aliases = ["bal"])
         async def balance(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
             id = str(ctx.message.author.id)
             amount = 0
             with open("money.txt", "r") as f:
@@ -98,13 +106,22 @@ class Economy(commands.Cog):
 
         @bot.command()
         async def addmoney(ctx, member: discord.Member, uAmount):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
             if ctx.message.author.guild_permissions.administrator:
+
                 id = str(member.id)
                 try:
                     uAmount = int(uAmount)
                 except:
                     await ctx.send(embed = discord.Embed(title = ":x: You must provide an integer amount to add", color = 0xff0000))
                     return
+
+                if int(uAmount) > 10000:
+                      await ctx.send(":x: You can only add up to 10,000 :coin: at a time!")
+                      return
 
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
@@ -139,6 +156,10 @@ class Economy(commands.Cog):
 
         @bot.command(aliases = ["subtractmoney"])
         async def removemoney(ctx, member: discord.Member, uAmount):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
             if ctx.message.author.guild_permissions.administrator:
                 id = str(member.id)
                 try:
@@ -146,6 +167,10 @@ class Economy(commands.Cog):
                 except:
                     await ctx.send(embed = discord.Embed(title = ":x: You must provide an integer amount to remove", color = 0xff0000))
                     return
+
+                if int(uAmount) > 10000:
+                      await ctx.send(":x: You can only remove up to 10,000 :coin: at a time!")
+                      return
 
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
@@ -181,6 +206,10 @@ class Economy(commands.Cog):
 #format: serverid;USERID:money\n
         @bot.command(aliases = ["lb"])
         async def leaderboard(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+                
             embed = discord.Embed(title = "{0}'s Leaderboard".format(ctx.guild), description = "\n", color = 0xff6633)
             with open("money.txt", "r") as f:
                 fl = f.readlines()
