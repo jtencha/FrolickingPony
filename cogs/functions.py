@@ -246,7 +246,9 @@ class Functions(commands.Cog):
 
         @bot.command(aliases = ["lbl"])
         async def listblacklist(ctx):
-            if str(ctx.message.author.id) == str("687081333876719740"):
+            owner_id = "687081333876719740"
+            ember = "825212502978723861"
+            if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
                 with open("botbanned.txt", "r+") as f:
                     for line in f:
                         await ctx.send(line)

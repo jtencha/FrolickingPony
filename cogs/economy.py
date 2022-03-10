@@ -109,6 +109,9 @@ class Economy(commands.Cog):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+            elif str(member.id) == str(873968526153625690):
+                await ctx.send("Beep Boop! Sorry, but you can't give me money.")
+                return
 
             if ctx.message.author.guild_permissions.administrator:
 
@@ -158,6 +161,9 @@ class Economy(commands.Cog):
         async def removemoney(ctx, member: discord.Member, uAmount):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            elif str(member.id) == str(873968526153625690):
+                await ctx.send("Beep Boop! Sorry, but you cannot take money from me.")
                 return
 
             if ctx.message.author.guild_permissions.administrator:
@@ -209,7 +215,10 @@ class Economy(commands.Cog):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
-                
+
+            people = []
+            amounts = []
+
             embed = discord.Embed(title = "{0}'s Leaderboard".format(ctx.guild), description = "\n", color = 0xff6633)
             with open("money.txt", "r") as f:
                 fl = f.readlines()
@@ -224,13 +233,34 @@ class Economy(commands.Cog):
                         userid = line[serverind + 1:ind]
                         serverid = line[:serverind]
                         amount = line[ind + 1:sind]
+
                         if (int(serverid) == ctx.message.guild.id):
-                            embed.add_field(name = str(count) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
-                            count += 1
+                            people.append(line)
+                            print("Added " + line)
+                            amounts.append(amount)
+                            print("Added " + amount)
+                            #embed.add_field(name = str(count) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
+                            #count += 1
+
+                amounts.sort(reverse = True)
+                print(amounts)
+                i = 1;
+                for y in amounts:
+                    for x in people:
+                        ind = x.index(":")
+                        serverind = x.index(";")
+                        sind = x.index("\n")
+                        userid = x[serverind + 1:ind]
+                        amount = x[ind + 1:sind]
+                        print(amount + " vs. " + y)
+                        if (amount == y):
+                            embed.add_field(name = str(i) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
+                            i+= 1
+
+                #embed.add_field(name = people, value = "‎‎‎‎‎", inline = False)
                 f.close()
 
             await ctx.send(embed = embed)
-
 
         @work.error
         @addmoney.error

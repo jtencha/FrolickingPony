@@ -73,10 +73,10 @@ class ModCommands(commands.Cog):
                             await ctx.send("Unknown error - DM failed.")
 
                         await asyncio.sleep(toSleep)
-                        try:
+                        if muterole in member.roles:
                             await member.remove_roles(muterole)
                             await member.send("You have been unmuted in {0}.".format(server))
-                        except:
+                        else:
                             pass
 
                     except ValueError:

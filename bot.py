@@ -44,7 +44,8 @@ async def on_ready():
 @bot.command()
 async def sleep(ctx):
     owner_id = "687081333876719740"
-    if str(ctx.message.author.id) == str(owner_id):
+    ember = "825212502978723861"
+    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         await ctx.send("Goodnight...")
         print("User terminated the bot.")
         quit()
@@ -55,7 +56,8 @@ async def sleep(ctx):
 @bot.command()
 async def reload(ctx):
     owner_id = "687081333876719740"
-    if str(ctx.message.author.id) == str(owner_id):
+    ember = "825212502978723861"
+    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.unload_extension("cogs.{0}".format(filename[:-3]))
@@ -64,30 +66,32 @@ async def reload(ctx):
         embed = discord.Embed(title = ":white_check_mark: Cogs successfully reloaded.", description = "\n", color = 0x009933)
         await ctx.send(embed = embed)
     else:
-        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owners can use this command!", color = 0xff0000))
 
 #manually reload in case something doesn't work
 @bot.command()
 async def unpack(ctx):
     owner_id = "687081333876719740"
-    if str(ctx.message.author.id) == str(owner_id):
+    ember = "825212502978723861"
+    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.load_extension("cogs.{0}".format(filename[:-3]))
-        await ctx.send(embed = discord.Embed(title = ":white_check_mark: Unpacked", description = "Successfully loaded cogs", color = 0x009933))
+        await ctx.send(embed = discord.Embed(title = ":white_check_mark: Wake and Shake", description = "All checks passed.", color = 0x009933))
     else:
-        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owners can use this command!", color = 0xff0000))
 
 @bot.command()
 async def pack(ctx):
     owner_id = "687081333876719740"
-    if str(ctx.message.author.id) == str(owner_id):
+    ember = "825212502978723861"
+    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.unload_extension("cogs.{0}".format(filename[:-3]))
-        await ctx.send(embed = discord.Embed(title = ":white_check_mark: Packed", description = "Successfully packed cogs", color = 0x009933))
+        await ctx.send(embed = discord.Embed(title = ":white_check_mark: Go to Jail. Do not pass go.", description = "All checks passed.", color = 0x009933))
     else:
-        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owners can use this command!", color = 0xff0000))
 
 @bot.command()
 async def uptime(ctx):
