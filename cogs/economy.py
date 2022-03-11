@@ -241,26 +241,35 @@ class Economy(commands.Cog):
                             print("Added " + amount)
                             #embed.add_field(name = str(count) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
                             #count += 1
-
-                amounts.sort(reverse = True)
-                print(amounts)
-                i = 1;
-                for y in amounts:
-                    for x in people:
-                        ind = x.index(":")
-                        serverind = x.index(";")
-                        sind = x.index("\n")
-                        userid = x[serverind + 1:ind]
-                        amount = x[ind + 1:sind]
-                        print(amount + " vs. " + y)
-                        if (amount == y):
-                            embed.add_field(name = str(i) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
-                            i+= 1
-
-                #embed.add_field(name = people, value = "‎‎‎‎‎", inline = False)
                 f.close()
 
+            amounts.sort(reverse = True)
+            amounts.sort(reverse = True, key = len) 
+
+            print(amounts)
+            i = 1;
+            for y in amounts:
+                for x in people:
+                    ind = x.index(":")
+                    serverind = x.index(";")
+                    sind = x.index("\n")
+                    userid = x[serverind + 1:ind]
+                    amount = x[ind + 1:sind]
+                    print(amount + " vs. " + y)
+                    if (amount == y):
+                        embed.add_field(name = str(i) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
+                        i+= 1
+
+            #embed.add_field(name = people, value = "‎‎‎‎‎", inline = False)
+
             await ctx.send(embed = embed)
+
+        @bot.command(aliasess = ["gm"])
+        async def giftmoney(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+
 
         @work.error
         @addmoney.error

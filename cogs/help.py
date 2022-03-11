@@ -30,8 +30,8 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats`", inline = False)
                 embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.8.1\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents`", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.8.2\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -108,7 +108,9 @@ class Help(commands.Cog):
             elif type == "removemoney":
                 await ctx.send(embed = help_template("removemoney", "Remove money from a user's bank account", "`removemoney [user] [amount]`", "Administrator"))
             elif type == "leaderboard":
-                await ctx.send(embed = help_template("leaderboard", "Shows the economic leaderboard of the server", "leaderboard", "Send messages"))
+                await ctx.send(embed = help_template("leaderboard", "Shows the economic leaderboard of the server", "`leaderboard`", "Send messages"))
+            elif type == "printcontents":
+                await ctx.send(embed = help_template("printcontents", "Print the contents of a specific file", "`printcontents`", "Send messages (owner only)"))
             else:
                 await ctx.send("{0} is not a recognized command.".format(type))
 

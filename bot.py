@@ -18,6 +18,9 @@ intents = discord.Intents(messages = True, guilds = True, members = True)
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
+owner_id = "687081333876719740"
+ember = "825212502978723861"
+
 #check on entry
 def isBanned(id, type = 1):
     if type == 1:
@@ -43,8 +46,6 @@ async def on_ready():
 #terminate bot
 @bot.command()
 async def sleep(ctx):
-    owner_id = "687081333876719740"
-    ember = "825212502978723861"
     if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         await ctx.send("Goodnight...")
         print("User terminated the bot.")
@@ -55,8 +56,6 @@ async def sleep(ctx):
 #reload files
 @bot.command()
 async def reload(ctx):
-    owner_id = "687081333876719740"
-    ember = "825212502978723861"
     if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
@@ -71,8 +70,6 @@ async def reload(ctx):
 #manually reload in case something doesn't work
 @bot.command()
 async def unpack(ctx):
-    owner_id = "687081333876719740"
-    ember = "825212502978723861"
     if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
@@ -83,8 +80,7 @@ async def unpack(ctx):
 
 @bot.command()
 async def pack(ctx):
-    owner_id = "687081333876719740"
-    ember = "825212502978723861"
+
     if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
@@ -92,6 +88,23 @@ async def pack(ctx):
         await ctx.send(embed = discord.Embed(title = ":white_check_mark: Go to Jail. Do not pass go.", description = "All checks passed.", color = 0x009933))
     else:
         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owners can use this command!", color = 0xff0000))
+
+@bot.command()
+async def printcontents(ctx, file):
+    if (str(ctx.message.author.id) == str(owner_id)):
+        embed = discord.Embed(title = "Contents of {0}".format(file), description = "\n", color = 0xff6633)
+        try:
+            with open(file, "r") as f:
+                lines = f.readlines()
+                i = 0;
+                for line in lines:
+                    if line != " " or line != "\n" or line != "":
+                        embed.add_field(name = "‎", value = "{0}: {1}".format(i, line), inline = False)
+                    i+=1
+            await ctx.send(embed = embed)
+        except FileNotFoundError:
+            await ctx.send(embed = discord.Embed(title = ":x: Error", description = "The provided file does not exist!", color = 0xff0000))
+
 
 @bot.command()
 async def uptime(ctx):
