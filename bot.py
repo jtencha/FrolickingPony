@@ -14,12 +14,12 @@ prefix = "?"
 intents = discord.Intents.default()
 intents = discord.Intents(messages = True, guilds = True, members = True)
 
-
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
 owner_id = "687081333876719740"
 ember = "825212502978723861"
+
 
 #check on entry
 def isBanned(id, type = 1):
@@ -36,12 +36,12 @@ def isBanned(id, type = 1):
             else:
                 return False
 
-
 #basic trigger stuff
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
     await bot.change_presence(activity = discord.Game("Going Insane | " + prefix + "help"))
+    #await bot.change_presence(activity = discord.Game("Undergoing Maintenance"))
 
 #terminate bot
 @bot.command()
@@ -96,10 +96,9 @@ async def printcontents(ctx, file):
         try:
             with open(file, "r") as f:
                 lines = f.readlines()
-                i = 0;
+                i = 1;
                 for line in lines:
-                    if line != " " or line != "\n" or line != "":
-                        embed.add_field(name = "‎", value = "{0}: {1}".format(i, line), inline = False)
+                    embed.add_field(name = "‎", value = "{0}: {1}".format(i, line), inline = False)
                     i+=1
             await ctx.send(embed = embed)
         except FileNotFoundError:

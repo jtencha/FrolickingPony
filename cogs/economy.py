@@ -6,6 +6,8 @@ import os
 import asyncio
 import random
 from bot import *
+
+list = {}
 '''
 ----------------------
 TO-DO:
@@ -27,23 +29,26 @@ class Economy(commands.Cog):
             paycheck = random.choice([x for x in range(100, 300)])
             count = 0
             with open("money.txt", "r") as f:
-                fl = f.readlines()
-                for line in fl:
-                    if (line.find(";") == -1 or line.find(":") == -1):
-                        continue
-                    else:
-                        ind = line.index(":")
-                        sind = line.index("\n")
-                        serverind = line.index(";")
-                        userid = line[serverind + 1:ind]
-                        if (id == userid):
-                            serverid = line[:serverind]
-                            if (int(serverid) == ctx.message.guild.id):
-                                previous = line[ind + 1:sind]
-                                count += 1
+                try:
+                    fl = f.readlines()
+                    for line in fl:
+                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                            continue
                         else:
-                            print("Line 35")
-                f.close()
+
+                            ind = line.index(":")
+                            sind = line.index("\n")
+                            serverind = line.index(";")
+                            userid = line[serverind + 1:ind]
+                            if (id == userid):
+                                serverid = line[:serverind]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    previous = line[ind + 1:sind]
+                                    count += 1
+                    f.close()
+                except Exception as e:
+                    channel = bot.get_channel(942166599710965831)
+                    await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
 
 
             if (count == 0):
@@ -58,25 +63,30 @@ class Economy(commands.Cog):
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
                 with open("money.txt", "w") as f:
-                    for line in fl:
-                        ind = line.index(":")
-                        serverind = line.index(";")
-                        userid = line[serverind + 1:ind]
-                        if (id == userid):
-                            serverid = line[:serverind]
-                            if (int(serverid) == ctx.message.guild.id):
-                                total = str(tota)
-                                set = str(serverid) + ";" + id + ":" + total + "\n"
-                                f.write(set)
+                    try:
+                        for line in fl:
+                            #channel = bot.get_channel(942166599710965831)
+                            #await channel.send(line)
+                            ind = line.index(":")
+                            serverind = line.index(";")
+                            userid = line[serverind + 1:ind]
+                            if (id == userid):
+                                serverid = line[:serverind]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    total = str(tota)
+                                    set = str(serverid) + ";" + id + ":" + total + "\n"
+                                    f.write(set)
+                                else:
+                                    f.write(line)
                             else:
                                 f.write(line)
-                        else:
-                            f.write(line)
-                    f.close()
+                        f.close()
+                    except Exception as e:
+                        channel = bot.get_channel(942166599710965831)
+                        await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
+
                 await ctx.send("You gained {0} :coin: from working.".format(paycheck))
                 return
-
-
 
         @bot.command(aliases = ["bal"])
         async def balance(ctx):
@@ -89,7 +99,7 @@ class Economy(commands.Cog):
             with open("money.txt", "r") as f:
                 fl = f.readlines()
                 for line in fl:
-                    if (line == "" or line == "\n"):
+                    if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
                         continue
                     else:
                         ind = line.index(":") #start of balance
@@ -132,7 +142,7 @@ class Economy(commands.Cog):
                 with open("money.txt", "w") as f:
                     count = 0
                     for line in fl:
-                        if (line == "" or line == "\n"):
+                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
                             continue
                         else:
                             ind = line.index(":")
@@ -184,8 +194,7 @@ class Economy(commands.Cog):
                 with open("money.txt", "w") as f:
                     count = 0
                     for line in fl:
-                        print("LINE: " + '"' + line + '"')
-                        if (line == "" or line == "\n"):
+                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
                             continue
                         else:
                             ind = line.index(":")
@@ -224,7 +233,7 @@ class Economy(commands.Cog):
                 fl = f.readlines()
                 count = 1
                 for line in fl:
-                    if (line == "" or line == "\n"):
+                    if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
                         continue
                     else:
                         ind = line.index(":")
@@ -244,10 +253,11 @@ class Economy(commands.Cog):
                 f.close()
 
             amounts.sort(reverse = True)
-            amounts.sort(reverse = True, key = len) 
+            amounts.sort(reverse = True, key = len)
 
             print(amounts)
             i = 1;
+
             for y in amounts:
                 for x in people:
                     ind = x.index(":")
@@ -270,12 +280,95 @@ class Economy(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
+        @bot.command(aliases = ["d"])
+        @commands.cooldown(1, 3600, commands.BucketType.member)
+        async def dice(ctx, uamount: int):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            else:
+                if int(uamount) > 300:
+                    await ctx.send(":x: You cannot bet more than 300 :coin: at a time!")
+                elif int(uamount) < 100:
+                    await ctx.send(":x: You must bet at least 100 :coin:!")
+                else:
+                    with open("money.txt", "r") as f:
+                        fl = f.readlines()
+                        for line in fl:
+                            if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                                continue
+                            else:
+                                ind = line.index(":")
+                                sind = line.index("\n")
+                                serverind = line.index(";")
+                                userid = line[serverind + 1:ind]
+                                if (id == userid):
+                                    serverid = line[:serverind]
+                                    if (int(serverid) == ctx.message.guild.id):
+                                        amount = line[ind + 1:sind]
+                                        if amount > uamount:
+                                            await ctx.send(":x: You do not have enough money to do this!")
+                        f.close()
+
+                    list = [x for x in range(1, 7)]
+                    p_one = random.choice(list)
+                    p_two = random.choice(list)
+                    p = int(p_one + p_two)
+
+                    comp_one = random.choice(list)
+                    comp_two = random.choice(list)
+
+                    c = int(comp_one + comp_two)
+
+                    await ctx.send(":game_die: You roll a **{0}** and a **{1}** for a total of **{2}** ...".format(p_one, p_two, (p_one + p_two)))
+                    await asyncio.sleep(2)
+                    await ctx.send(":game_die: I roll a **{0}** and a **{1}** for a total of **{2}**...".format(comp_one, comp_two, (comp_one + comp_two)))
+                    await asyncio.sleep(2)
+
+                    if p > c:
+                        await ctx.send("Your score is higher than mine! You won **{0}**!".format(uamount))
+                        #snew = int(amount) + int(uamount)
+                        #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
+                        set = int(uamount)
+                    elif p < c:
+                        await ctx.send("My score is higher than yours :smirk:. You lost **{0}**".format(uamount))
+                        #snew = int(amount) - int(uamount)
+                        #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
+                        set = -1 * int(uamount)
+                    else:
+                        await ctx.send("Fine... we'll call it a draw.")
+                        set = 0
+
+                    with open("money.txt", "r") as f:
+                        fla = f.readlines()
+                    with open("money.txt", "w") as f:
+                        for line in fla:
+                            if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                                continue
+                            else:
+                                ind = line.index(":")
+                                sind = line.index("\n")
+                                serverind = line.index(";")
+                                userid = line[serverind + 1:ind]
+                                if (ctx.message.author.id == int(userid)):
+                                    serverid = line[:serverind]
+                                    amount = line[ind + 1:sind]
+                                    if (int(serverid) == ctx.message.guild.id):
+                                        newAmount = int(amount) + int(set)
+                                        snew = str(newAmount)
+                                        f.write(str(serverid) + ";" + userid + ":" + snew + "\n")
+                                    else:
+                                        f.write(line)
+                                else:
+                                    f.write(line)
+
 
         @work.error
         @addmoney.error
         @balance.error
         @removemoney.error
         @leaderboard.error
+        @dice.error
         async def fail(ctx, error):
             if isinstance(error, commands.CommandOnCooldown):
                 time = int(round(error.retry_after, 0) / 60)
