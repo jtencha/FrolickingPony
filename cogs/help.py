@@ -27,11 +27,11 @@ class Help(commands.Cog):
 
             if type == "1":
                 embed = discord.Embed(title = "Help Menu", description = "Use help [command] for specific information. Time suffixes are h, m, and d.", color = 0xff6633)
-                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats`", inline = False)
-                embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard` | `dice`")
+                embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `support` ", inline = False)
+                embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard` | `dice` | `daily`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents`", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.8.3\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents` ", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.8.4\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -113,6 +113,14 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("printcontents", "Print the contents of a specific file", "`printcontents`", "Send messages (owner only)"))
             elif type == "dice":
                 await ctx.send(embed = help_template("dice", "Gamble your life savings away", "`dice [amount]`", "Send messages"))
+            elif type == "daily":
+                await ctx.send(embed = help_template("daily", "Claim money daily", "`daily`", "Send messages"))
+            elif type == "support":
+                await ctx.send(embed = help_template("support", "Invite link to the FrolickingPony support server", "`support`", "Send messages"))
+            elif type == "settings":
+                await ctx.send(embed = help_template("settings", "Access server-based settings. Customize by adding the two fields.", "`settings (setting) (enable/disable)`", "Administrator"))
+            elif type == "changestatus":
+                await ctx.send(embed = help_template("changestatus", "Change the status of the bot.", "`changestatus [status]`", "Owner"))
             else:
                 await ctx.send("{0} is not a recognized command.".format(type))
 

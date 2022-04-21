@@ -256,6 +256,11 @@ class Functions(commands.Cog):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
                 return
 
+        @bot.command()
+        async def support(ctx):
+            await ctx.send("Join this server for official release notes and development programs.")
+            await ctx.send("https://discord.gg/ffHUnEy7gM")
+
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):

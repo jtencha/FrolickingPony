@@ -7,7 +7,6 @@ import asyncio
 import random
 from bot import *
 
-list = {}
 '''
 ----------------------
 TO-DO:
@@ -274,12 +273,6 @@ class Economy(commands.Cog):
 
             await ctx.send(embed = embed)
 
-        @bot.command(aliasess = ["gm"])
-        async def giftmoney(ctx):
-            if isBanned(str(ctx.message.author.id), 1) != False:
-                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
-                return
-
         @bot.command(aliases = ["d"])
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def dice(ctx, uamount: int):
@@ -289,8 +282,10 @@ class Economy(commands.Cog):
             else:
                 if int(uamount) > 300:
                     await ctx.send(":x: You cannot bet more than 300 :coin: at a time!")
+                    dice.reset_cooldown(ctx)
                 elif int(uamount) < 100:
                     await ctx.send(":x: You must bet at least 100 :coin:!")
+                    dice.reset_cooldown(ctx)
                 else:
                     with open("money.txt", "r") as f:
                         fl = f.readlines()
@@ -308,6 +303,8 @@ class Economy(commands.Cog):
                                         amount = line[ind + 1:sind]
                                         if amount > uamount:
                                             await ctx.send(":x: You do not have enough money to do this!")
+                                            dice.reset_cooldown(ctx)
+                                            return
                         f.close()
 
                     list = [x for x in range(1, 7)]
@@ -326,12 +323,12 @@ class Economy(commands.Cog):
                     await asyncio.sleep(2)
 
                     if p > c:
-                        await ctx.send("Your score is higher than mine! You won **{0}**!".format(uamount))
+                        await ctx.send("Your score is higher than mine! You won **{0}** :coin:!".format(uamount))
                         #snew = int(amount) + int(uamount)
                         #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
                         set = int(uamount)
                     elif p < c:
-                        await ctx.send("My score is higher than yours :smirk:. You lost **{0}**".format(uamount))
+                        await ctx.send("My score is higher than yours :smirk:. You lost **{0}** :coin:".format(uamount))
                         #snew = int(amount) - int(uamount)
                         #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
                         set = -1 * int(uamount)
@@ -362,7 +359,56 @@ class Economy(commands.Cog):
                                 else:
                                     f.write(line)
 
+      
+        @bot.command()
+        @commands.cooldown(1, 86400, commands.BucketType.member)
+        async def daily(ctx):
+            if isBanned(str(ctx.message.author.id), 1) != False:
+                await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            else:
+                sum = random.choice([x for x in range(50, 200)])
+                count = 0
+                with open("money.txt", "r") as f:
+                    fl = f.readlines()
+                with open("money.txt", "w") as f:
+                    for line in fl:
+                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                            continue
+                        else:
+                            ind = line.index(":")
+                            sind = line.index("\n")
+                            serverind = line.index(";")
+                            userid = line[serverind + 1:ind]
+                            if (str(ctx.message.author.id) == userid):
+                                serverid = line[:serverind]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    amount = line[ind + 1:sind]
+                                    new = int(amount) + sum
+                                    snew = str(new)
+                                    f.write(str(serverid) + ";" + userid + ":" + snew + "\n")
+                                    await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
+                                    count = 1
+                                else:
+                                  f.write(line)
+                            else:
+                              f.write(line)
 
+                        if count == 0:
+                            f.write(str(serverid) + ";" + userid + ":" + str(sum) + "\n")
+                            await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
+
+
+                    f.close()
+                      
+        @daily.error
+        async def special(ctx, error):
+            if isinstance(error, commands.CommandOnCooldown):
+                time = int((round(error.retry_after, 0) / 60) / 60)
+                await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} minutes".format(time), color = 0xff0000))
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
+                  
         @work.error
         @addmoney.error
         @balance.error
