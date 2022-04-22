@@ -63,23 +63,26 @@ class Economy(commands.Cog):
                     fl = f.readlines()
                 with open("money.txt", "w") as f:
                     try:
-                        for line in fl:
-                            #channel = bot.get_channel(942166599710965831)
-                            #await channel.send(line)
-                            ind = line.index(":")
-                            serverind = line.index(";")
-                            userid = line[serverind + 1:ind]
-                            if (id == userid):
-                                serverid = line[:serverind]
-                                if (int(serverid) == ctx.message.guild.id):
-                                    total = str(tota)
-                                    set = str(serverid) + ";" + id + ":" + total + "\n"
-                                    f.write(set)
-                                else:
-                                    f.write(line)
-                            else:
-                                f.write(line)
-                        f.close()
+                      if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                          f.write(line)
+                      else:
+                          for line in fl:
+                              #channel = bot.get_channel(942166599710965831)
+                              #await channel.send(line)
+                              ind = line.index(":")
+                              serverind = line.index(";")
+                              userid = line[serverind + 1:ind]
+                              if (id == userid):
+                                  serverid = line[:serverind]
+                                  if (int(serverid) == ctx.message.guild.id):
+                                      total = str(tota)
+                                      set = str(serverid) + ";" + id + ":" + total + "\n"
+                                      f.write(set)
+                                  else:
+                                      f.write(line)
+                              else:
+                                  f.write(line)
+                          f.close()
                     except Exception as e:
                         channel = bot.get_channel(942166599710965831)
                         await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
@@ -142,7 +145,7 @@ class Economy(commands.Cog):
                     count = 0
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
+                            f.write(line)
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -194,7 +197,7 @@ class Economy(commands.Cog):
                     count = 0
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
+                            f.write(line)
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -341,7 +344,7 @@ class Economy(commands.Cog):
                     with open("money.txt", "w") as f:
                         for line in fla:
                             if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                                continue
+                                f.write(line)
                             else:
                                 ind = line.index(":")
                                 sind = line.index("\n")
@@ -374,7 +377,7 @@ class Economy(commands.Cog):
                 with open("money.txt", "w") as f:
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
+                            f.write(line)
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -388,15 +391,15 @@ class Economy(commands.Cog):
                                     snew = str(new)
                                     f.write(str(serverid) + ";" + userid + ":" + snew + "\n")
                                     await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
-                                    count = 1
+                                    count += 1
                                 else:
                                   f.write(line)
                             else:
                               f.write(line)
 
-                        if count == 0:
-                            f.write(str(serverid) + ";" + userid + ":" + str(sum) + "\n")
-                            await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
+                    if count == 0:
+                        f.write(str(ctx.message.guild.id) + ";" + str(ctx.message.author.id) + ":" + str(sum) + "\n")
+                        await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
 
 
                     f.close()

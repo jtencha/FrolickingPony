@@ -11,17 +11,25 @@
     "cogs/economy.py": [
       {
         "id": "0c252380-70ce-40ef-8b02-fe7e29ec78fc",
-        "line": 395,
-        "version": 2305,
-        "index": 19136
+        "line": 402,
+        "version": 2933,
+        "index": 19343
       }
     ],
     "cogs/functions.py": [
       {
         "id": "afaf98c9-da51-424e-943e-bd67fb1b2e4d",
-        "line": 291,
-        "version": 2830,
-        "index": 15655
+        "line": 296,
+        "version": 2838,
+        "index": 15871
+      }
+    ],
+    "money.txt": [
+      {
+        "id": "c93b2549-1034-4aed-9ed5-f9c627032721",
+        "line": 20,
+        "version": 284,
+        "index": 473
       }
     ]
   }
