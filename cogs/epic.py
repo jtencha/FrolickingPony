@@ -12,6 +12,7 @@ class Epic(commands.Cog):
         self.bot = bot
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def guetzali(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -26,6 +27,7 @@ class Epic(commands.Cog):
             ]))
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def amogus(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -45,6 +47,7 @@ class Epic(commands.Cog):
             msg = await ctx.send(embed = embed)
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def redpanda(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -70,10 +73,14 @@ class Epic(commands.Cog):
         #I hate await async behavior so goddamn much
         #command developed for polyeggia server, per request
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def gibamdib(ctx, status = None):
             server = ctx.guild
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            elif isAllowed("gibamdib", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the gibamdib command.", color = 0xff0000))
                 return
 
             try:
@@ -114,6 +121,7 @@ class Epic(commands.Cog):
             await ctx.send(embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000))
 
         @bot.command(aliases = ["im"])
+        @bot_has_permissions(manage_webhooks = True)
         async def impersonate(ctx, member: discord.Member, *, message = None):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -136,6 +144,7 @@ class Epic(commands.Cog):
                 await webhook.delete()
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def block(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -162,6 +171,7 @@ class Epic(commands.Cog):
                     await ctx.send(embed = embed)
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def ezmoney(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -170,6 +180,7 @@ class Epic(commands.Cog):
                 await ctx.send("https://c.tenor.com/b7jgsT3ctlwAAAAC/when-the-money-fast-money.gif")
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def laugh(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -178,6 +189,7 @@ class Epic(commands.Cog):
                 await ctx.send("https://c.tenor.com/nbJLAkkQ4QQAAAAC/woody-laugh.gif")
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def poor(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -188,9 +200,18 @@ class Epic(commands.Cog):
 
         @impersonate.error
         @block.error
+        @amogus.error
+        @gibamdib.error
+        @laugh.error
+        @poor.error
+        @ezmoney.error
+        @redpanda.error
+        @guetzali.error
         async def impError(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include a user to impersonate!", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)

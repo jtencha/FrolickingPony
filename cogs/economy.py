@@ -18,10 +18,14 @@ class Economy(commands.Cog):
         self.bot = bot
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def work(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
 
             id = str(ctx.message.author.id)
@@ -63,26 +67,23 @@ class Economy(commands.Cog):
                     fl = f.readlines()
                 with open("money.txt", "w") as f:
                     try:
-                      if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                          f.write(line)
-                      else:
-                          for line in fl:
-                              #channel = bot.get_channel(942166599710965831)
-                              #await channel.send(line)
-                              ind = line.index(":")
-                              serverind = line.index(";")
-                              userid = line[serverind + 1:ind]
-                              if (id == userid):
-                                  serverid = line[:serverind]
-                                  if (int(serverid) == ctx.message.guild.id):
-                                      total = str(tota)
-                                      set = str(serverid) + ";" + id + ":" + total + "\n"
-                                      f.write(set)
-                                  else:
-                                      f.write(line)
-                              else:
-                                  f.write(line)
-                          f.close()
+                        for line in fl:
+                            #channel = bot.get_channel(942166599710965831)
+                            #await channel.send(line)
+                            ind = line.index(":")
+                            serverind = line.index(";")
+                            userid = line[serverind + 1:ind]
+                            if (id == userid):
+                                serverid = line[:serverind]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    total = str(tota)
+                                    set = str(serverid) + ";" + id + ":" + total + "\n"
+                                    f.write(set)
+                                else:
+                                    f.write(line)
+                            else:
+                                f.write(line)
+                        f.close()
                     except Exception as e:
                         channel = bot.get_channel(942166599710965831)
                         await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
@@ -91,9 +92,13 @@ class Economy(commands.Cog):
                 return
 
         @bot.command(aliases = ["bal"])
+        @bot_has_permissions(manage_webhooks = True)
         async def balance(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
 
             id = str(ctx.message.author.id)
@@ -117,6 +122,7 @@ class Economy(commands.Cog):
                 f.close()
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def addmoney(ctx, member: discord.Member, uAmount):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -124,6 +130,10 @@ class Economy(commands.Cog):
             elif str(member.id) == str(873968526153625690):
                 await ctx.send("Beep Boop! Sorry, but you can't give me money.")
                 return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
+                return
+
 
             if ctx.message.author.guild_permissions.administrator:
 
@@ -145,7 +155,7 @@ class Economy(commands.Cog):
                     count = 0
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            f.write(line)
+                            continue
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -170,6 +180,7 @@ class Economy(commands.Cog):
                 await ctx.send(":x: You don't have permission to run this command! Required: Administrator")
 
         @bot.command(aliases = ["subtractmoney"])
+        @bot_has_permissions(manage_webhooks = True)
         async def removemoney(ctx, member: discord.Member, uAmount):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -177,6 +188,10 @@ class Economy(commands.Cog):
             elif str(member.id) == str(873968526153625690):
                 await ctx.send("Beep Boop! Sorry, but you cannot take money from me.")
                 return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
+                return
+
 
             if ctx.message.author.guild_permissions.administrator:
                 id = str(member.id)
@@ -197,7 +212,7 @@ class Economy(commands.Cog):
                     count = 0
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            f.write(line)
+                            continue
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -222,10 +237,15 @@ class Economy(commands.Cog):
                 await ctx.send(":x: You don't have permission to run this command! Required: Administrator")
 #format: serverid;USERID:money\n
         @bot.command(aliases = ["lb"])
+        @bot_has_permissions(manage_webhooks = True)
         async def leaderboard(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
+                return
+
 
             people = []
             amounts = []
@@ -277,11 +297,16 @@ class Economy(commands.Cog):
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["d"])
+        @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def dice(ctx, uamount: int):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
+                return
+
             else:
                 if int(uamount) > 300:
                     await ctx.send(":x: You cannot bet more than 300 :coin: at a time!")
@@ -344,7 +369,7 @@ class Economy(commands.Cog):
                     with open("money.txt", "w") as f:
                         for line in fla:
                             if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                                f.write(line)
+                                continue
                             else:
                                 ind = line.index(":")
                                 sind = line.index("\n")
@@ -362,12 +387,15 @@ class Economy(commands.Cog):
                                 else:
                                     f.write(line)
 
-      
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 86400, commands.BucketType.member)
         async def daily(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
+                return
+            elif isAllowed("economy", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
             else:
                 sum = random.choice([x for x in range(50, 200)])
@@ -377,7 +405,7 @@ class Economy(commands.Cog):
                 with open("money.txt", "w") as f:
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            f.write(line)
+                            continue
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -391,39 +419,47 @@ class Economy(commands.Cog):
                                     snew = str(new)
                                     f.write(str(serverid) + ";" + userid + ":" + snew + "\n")
                                     await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
-                                    count += 1
+                                    count = 1
                                 else:
                                   f.write(line)
                             else:
                               f.write(line)
 
-                    if count == 0:
-                        f.write(str(ctx.message.guild.id) + ";" + str(ctx.message.author.id) + ":" + str(sum) + "\n")
-                        await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
+                        if count == 0:
+                            f.write(str(serverid) + ";" + userid + ":" + str(sum) + "\n")
+                            await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
 
 
                     f.close()
-                      
+
+
+
         @daily.error
         async def special(ctx, error):
             if isinstance(error, commands.CommandOnCooldown):
                 time = int((round(error.retry_after, 0) / 60) / 60)
-                await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} minutes".format(time), color = 0xff0000))
+                await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} hours".format(time), color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
-                  
+
+
         @work.error
         @addmoney.error
         @balance.error
         @removemoney.error
         @leaderboard.error
         @dice.error
+        #@number.error
         async def fail(ctx, error):
             if isinstance(error, commands.CommandOnCooldown):
                 time = int(round(error.retry_after, 0) / 60)
                 await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} minutes".format(time), color = 0xff0000))
             elif isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Missing member and/or amount", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
 

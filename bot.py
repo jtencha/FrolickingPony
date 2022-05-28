@@ -20,7 +20,6 @@ bot.remove_command("help")
 owner_id = "687081333876719740"
 ember = "825212502978723861"
 
-
 #check on entry
 def isBanned(id, type = 1):
     if type == 1:
@@ -36,12 +35,46 @@ def isBanned(id, type = 1):
             else:
                 return False
 
+#we have to do this the hard way, it seems
+def isAllowed(perm, id):
+    with open("settings.txt", "r") as f:
+        fl = f.readlines()
+        f.close()
+
+    for line in fl:
+        serverid = line[:line.index(":")]
+        usetting = line[line.index(":") + 1:line.index(";")]
+        status = line[line.index(";") + 1:]
+        if (int(serverid) == id):
+            if perm == usetting:
+                if status == "t\n":
+                    return True
+                else:
+                    return False
+
 #basic trigger stuff
 @bot.event
 async def on_ready():
     print("We're clear for takeoff!")
     await bot.change_presence(activity = discord.Game("Going Insane | " + prefix + "help"))
     #await bot.change_presence(activity = discord.Game("Undergoing Maintenance"))
+
+@bot.event
+async def on_guild_join(Guild):
+    with open("settings.txt", "a+") as f:
+        f.write(str(Guild.id) + ":" + "economy;f\n")
+        f.write(str(Guild.id) + ":" + "moderation;f\n")
+        f.write(str(Guild.id) + ":" + "gibamdib;f\n")
+        f.write(str(Guild.id) + ":" + "developer;f\n")
+
+@bot.command()
+async def changestatus(ctx, *, status):
+    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+        await bot.change_presence(activity = discord.Game(status))
+        await ctx.send("Updated status")
+    else:
+        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only the bot owner can use this command!", color = 0xff0000))
+
 
 #terminate bot
 @bot.command()

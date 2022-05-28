@@ -13,6 +13,7 @@ class Functions(commands.Cog):
         self.bot = bot
 
         @bot.command(aliases = ["av"])
+        @bot_has_permissions(manage_webhooks = True)
         async def avatar(ctx, member: Optional[Member]):
             print(type(member))
             #stupid async await
@@ -37,6 +38,7 @@ class Functions(commands.Cog):
             await ctx.send(embed = embed)
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def stats(ctx):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -59,22 +61,27 @@ class Functions(commands.Cog):
 
         @stats.error
         async def fail(ctx, error):
-            embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-            await ctx.send(embed = embed)
+            if isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
 
         #Bot response time
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def ping(ctx):
             embed = discord.Embed(title = ":ping_pong: Pong!", description = "{0}ms".format(round(bot.latency * 1000)), color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["i"])
+        @bot_has_permissions(manage_webhooks = True)
         async def invite(ctx):
             embed = discord.Embed(title = "Invite FrolickingPony", url = "https://discord.com/api/oauth2/authorize?client_id=873968526153625690&permissions=1644972474359&scope=bot", description = "Invite the bot with the link above!", color = 0xff6633)
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["p"])
-        @bot_has_permissions(manage_messages = True)
+        @bot_has_permissions(manage_messages = True, manage_webhooks = True)
         async def poll(ctx, option_one, option_two, option_three = None, option_four = None):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -103,12 +110,15 @@ class Functions(commands.Cog):
         async def denied(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include at least two poll options!", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
 
         #info on user
         @bot.command(aliases = ["a"])
+        @bot_has_permissions(manage_webhooks = True)
         async def about(ctx, member: Optional[Member]):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -133,18 +143,49 @@ class Functions(commands.Cog):
             embed.add_field(name = "Highest Role:", value = user.top_role.mention)
             embed.add_field(name = "Created Account:", value = user.created_at.strftime("%A, %B %d %Y"))
             embed.add_field(name = "Joined Server:", value = user.joined_at.strftime("%A, %B, %d %Y"))
-            embed.add_field(name = "Has Nitro:", value = bool(user.premium_since))
+            perms = []
+
+            if user.guild_permissions.administrator:
+                perms.append("Administrator")
+            if user.guild_permissions.manage_channels:
+                perms.append("Manage Channels")
+            if user.guild_permissions.kick_members:
+                perms.append("Kick Members")
+            if user.guild_permissions.ban_members:
+                perms.append("Ban Members")
+            if user.guild_permissions.manage_messages:
+                perms.append("Manage Messages")
+
+            string = ""
+            x = 1;
+
+            if len(perms) == 0:
+                string = None
+            else:
+                for i in perms:
+                    if x > len(perms):
+                        string += i
+                    else:
+                        string += i + ", "
+                    x += 1
+
+            embed.add_field(name = "Key Permissions: ", value = string, inline = False)
             embed.set_thumbnail(url = user.avatar_url)
             await ctx.send(embed = embed)
+
 
         @about.error
         @avatar.error
         async def incorrect(ctx, error):
-            embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
-            await ctx.send(embed = embed)
-            print(error)
+            if isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
+                print(error)
 
         @bot.command(aliases = ["ei"])
+        @bot_has_permissions(manage_webhooks = True)
         async def eightball(ctx, question):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -156,11 +197,14 @@ class Functions(commands.Cog):
         async def bad(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send("You need to ask me something...")
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
 
         @bot.command(aliases = ["e"])
+        @bot_has_permissions(manage_webhooks = True)
         async def embed(ctx, title, *, message = "\n"):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -179,6 +223,7 @@ class Functions(commands.Cog):
             await ctx.send(embed = embed)
 
         @bot.command(aliases = ["co"])
+        @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 3600, commands.BucketType.user)
         async def contact(ctx, *, message):
             try:
@@ -206,6 +251,7 @@ class Functions(commands.Cog):
                 await ctx.send(embed = embed)
 
         @bot.command(aliases = ["bl"])
+        @bot_has_permissions(manage_webhooks = True)
         async def blacklist(ctx, member: discord.Member):
             if str(ctx.message.author.id) == str("687081333876719740"):
                 with open("botbanned.txt", "a+") as f:
@@ -220,6 +266,7 @@ class Functions(commands.Cog):
                 return
 
         @bot.command(aliases = ["ubl"])
+        @bot_has_permissions(manage_webhooks = True)
         async def unblacklist(ctx, member: discord.Member):
             if str(ctx.message.author.id) == str("687081333876719740"):
                 count = 0
@@ -245,10 +292,9 @@ class Functions(commands.Cog):
                 return
 
         @bot.command(aliases = ["lbl"])
+        @bot_has_permissions(manage_webhooks = True)
         async def listblacklist(ctx):
-            owner_id = "687081333876719740"
-            ember = "825212502978723861"
-            if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+            if str(ctx.message.author.id) == str("687081333876719740"):
                 with open("botbanned.txt", "r+") as f:
                     for line in f:
                         await ctx.send(line)
@@ -257,15 +303,106 @@ class Functions(commands.Cog):
                 return
 
         @bot.command()
+        @bot_has_permissions(manage_webhooks = True)
         async def support(ctx):
             await ctx.send("Join this server for official release notes and development programs.")
             await ctx.send("https://discord.gg/ffHUnEy7gM")
+
+        @bot.command(aliases = ["set"])
+        @bot_has_permissions(manage_webhooks = True)
+        async def settings(ctx, setting = None, new = None):
+            if ctx.message.author.guild_permissions.administrator:
+                if setting == None and new == None:
+                    with open("settings.txt", "r") as f:
+                        lines = f.readlines()
+
+                    economyStatus = None
+                    modStatus = None
+                    aStatus = None
+                    dStatus = None
+
+                    for line in lines:
+                        #serverid:setting;t/f
+                        if (line.find(";") == -1 or line.find(":") == -1):
+                            continue
+                        else:
+                            serverid = line[:line.index(":")]
+                            usetting = line[line.index(":") + 1:line.index(";")]
+                            status = line[line.index(";") + 1:]
+                            if (int(serverid) == ctx.message.guild.id):
+                                if usetting.lower() == "economy":
+                                    if status == "t\n":
+                                        economyStatus = "Enabled"
+                                    else:
+                                        economyStatus = "Disabled"
+                                elif usetting.lower() == "moderation":
+                                    if status == "t\n":
+                                        modStatus = "Enabled"
+                                    else:
+                                        modStatus = "Disabled"
+                                elif usetting.lower() == "gibamdib":
+                                    if status == "t\n":
+                                        aStatus = "Enabled"
+                                    else:
+                                        aStatus = "Disabled"
+                                elif usetting.lower() == "developer":
+                                    if status == "t\n":
+                                        dStatus = "Enabled"
+                                    else:
+                                        dStatus = "Disabled"
+
+
+                    embed = discord.Embed(title = "{0} Settings Menu".format(ctx.guild), description = "Change specific settings using `?settings [setting] enable/disable`", color = 0xff6633)
+                    embed.add_field(name = "Economy", value = economyStatus, inline = False)
+                    embed.add_field(name = "Moderation", value = modStatus, inline = False)
+                    embed.add_field(name = 'gibamdib', value = aStatus, inline = False)
+                    embed.add_field(name = "Early Access Mode (Developer)", value = dStatus, inline = False)
+                    await ctx.send(embed = embed)
+                    return
+                elif setting != None and new == None:
+                    await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You did not provide a status update for {0}".format(setting), color = 0xff0000))
+                    return
+                else:
+                    if (setting == "economy" or setting == "moderation" or setting == "gibamdib" or setting == "developer"):
+                        if new == "enable":
+                            new = "t"
+                        elif new == "disable":
+                            new = "f"
+                        else:
+                            await ctx.send(title = ":x: Error", description = "Invalid status. Only use enable or disable.", color = 0xff0000)
+                            return
+
+                        with open("settings.txt", "r") as f:
+                            lines = f.readlines()
+                        with open("settings.txt", "w") as f:
+                            for line in lines:
+                                serverid = line[:line.index(":")]
+                                usetting = line[line.index(":") + 1:line.index(";")]
+                                status = line[line.index(";") + 1:]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    if usetting.lower() == setting:
+                                        f.write(str(ctx.message.guild.id) + ":" + setting + ";" + new + "\n")
+                                        await ctx.send(":white_check_mark: Updated {0} status".format(setting))
+                                        if usetting.lower() == "developer" and new.lower() == "t":
+                                            await ctx.send(embed = discord.Embed(title = ":x: WARNING", description = "Enabling the developer version of the bot grants early access to unreleased features, but since these features haven't been released they are very unstable, and may cause unwanted effects.", color = 0xff0000))
+                                    else:
+                                        f.write(line)
+                                else:
+                                    f.write(line)
+                    else:
+                        await ctx.send(embed = discord.Embed(title = ":x: Error", description = "That setting does not exist!", color = 0xff0000))
+                        return
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only server administrators can configure settings with the bot.", color = 0xff0000))
+
 
         @embed.error
         async def fail(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You need to give me at least a title to embed!", color = 0xff0000)
                 await ctx.send(embed = embed)
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send("`{0}`".format(error))
 
@@ -277,16 +414,21 @@ class Functions(commands.Cog):
             elif isinstance(error, commands.CommandOnCooldown):
                 time = int(round(error.retry_after, 0) / 60)
                 await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} minutes".format(time), color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)
 
         @blacklist.error
         @unblacklist.error
+        @settings.error
         async def blackError(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You did not give me a user to blacklist!", color = 0xff0000)
                 await ctx.send(embed = embed)
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
                 await ctx.send(embed = embed)

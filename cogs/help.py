@@ -20,6 +20,7 @@ class Help(commands.Cog):
         #provide specific info for a given command
         #plug and chug into the function above
         @bot.command(aliases = ["h"])
+        @bot_has_permissions(manage_webhooks = True)
         async def help(ctx, type = "1"):
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
@@ -30,8 +31,8 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `support` ", inline = False)
                 embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard` | `dice` | `daily`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents` ", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.8.4\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents` | `settings` | `changestatus` ", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.9\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -123,6 +124,14 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("changestatus", "Change the status of the bot.", "`changestatus [status]`", "Owner"))
             else:
                 await ctx.send("{0} is not a recognized command.".format(type))
+
+        @help.error
+        async def lol(ctx, error):
+            if isinstance(error, BotMissingPermissions):
+                await ctx.send("I don't have permission to run this command! Required {0}".format(join(error.missing_perms)))
+            else:
+                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
+                await ctx.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(Help(bot))

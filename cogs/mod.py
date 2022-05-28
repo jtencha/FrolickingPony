@@ -39,9 +39,12 @@ class ModCommands(commands.Cog):
             return embed
 
         @bot.command(aliases = ["m"])
-        @bot_has_permissions(manage_messages = True)
+        @bot_has_permissions(manage_messages = True, manage_webhooks = True)
         async def mute(ctx, member: discord.Member, time = "10m", *, reason = "Not Specified"):
-            if ctx.message.author.guild_permissions.mute_members:
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
+            elif ctx.message.author.guild_permissions.mute_members:
                 moderator = ctx.message.author
                 server = ctx.guild
 
@@ -105,8 +108,11 @@ class ModCommands(commands.Cog):
         #remove the mute role from a member
         #Will only unmute if user has "muterole"
         @bot.command(aliases = ["um"])
-        @bot_has_permissions(manage_messages = True)
+        @bot_has_permissions(manage_messages = True, manage_webhooks = True)
         async def unmute(ctx, member: discord.Member, *, reason = "Not Specified"):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.mute_members:
                 moderator = ctx.message.author
                 server = ctx.guild
@@ -136,8 +142,11 @@ class ModCommands(commands.Cog):
 
         #kicks a member
         @bot.command(aliases = ["k"])
-        @bot_has_permissions(ban_members = True)
+        @bot_has_permissions(ban_members = True, manage_webhooks = True)
         async def kick(ctx, member: discord.Member, *, reason = "Not Specified"):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.kick_members:
                 moderator = ctx.message.author
                 server = ctx.guild
@@ -166,8 +175,11 @@ class ModCommands(commands.Cog):
         #todo: make temp bans
         #will probs make another command so I don't have to deal with conflicts
         @bot.command(aliases = ["b"])
-        @bot_has_permissions(ban_members = True)
+        @bot_has_permissions(ban_members = True, manage_webhooks = True)
         async def ban(ctx, member: discord.Member, *, reason = "Not Specified"):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.ban_members:
                 moderator = ctx.message.author
                 server = ctx.guild
@@ -193,9 +205,12 @@ class ModCommands(commands.Cog):
 
 
         @bot.command(aliases = ["tb"])
-        @bot_has_permissions(ban_members = True)
+        @bot_has_permissions(ban_members = True, manage_webhooks = True)
         @guild_only()
         async def tempban(ctx, member: discord.Member, time, *, reason = "Not specified"):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.ban_members:
                 moderator = ctx.message.author
                 server = ctx.guild
@@ -228,9 +243,12 @@ class ModCommands(commands.Cog):
         #unban a Member
         #todo: bot unbans but returns an error
         @bot.command(aliases = ["ub"])
-        @bot_has_permissions(ban_members = True)
+        @bot_has_permissions(ban_members = True, manage_webhooks = True)
         @guild_only()
         async def unban(ctx, id: int):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.ban_members:
                 userid = await bot.fetch_user(id)
                 await ctx.guild.unban(userid)
@@ -240,8 +258,11 @@ class ModCommands(commands.Cog):
 
         #set a nickname of a member
         @bot.command(aliases = ["n"])
-        @bot_has_permissions(manage_nicknames = True)
+        @bot_has_permissions(manage_nicknames = True, manage_webhooks = True)
         async def nick(ctx, member: discord.Member, *, nickname = None):
+            if isAllowed("moderation", str(ctx.message.guild.id)) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
+                return
             if ctx.message.author.guild_permissions.manage_nicknames:
                 if nickname == None:
                     await member.edit(nick = None)
@@ -266,7 +287,11 @@ class ModCommands(commands.Cog):
 
 
         @bot.command(aliases = ["c"])
+        @bot_has_permissions(manage_webhooks = True)
         async def clear(ctx, messages, member: discord.Member = None):
+            if isAllowed("moderation", ctx.message.guild.id) == False:
+                await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the moderation features of this bot."))
+                return
             if ctx.author.guild_permissions.manage_messages:
                 try:
                     messages = int(messages)
@@ -299,6 +324,8 @@ class ModCommands(commands.Cog):
         async def clearError(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Missing an Argument", description = "A certain number of messages to clear must be provided.", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send(embed = standardCommandlineError(error))
 
@@ -308,6 +335,8 @@ class ModCommands(commands.Cog):
                 await ctx.send(embed = discord.Embed(title = ":x: Bad Argument", description = "This command does not accept mentions. Please use an ID.", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.errors.CommandInvokeError):
                 await ctx.send(embed = discord.Embed(title = ":x: Execution Error", description = "This user is not banned from this server.", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send(embed = standardCommandlineError(error))
 
@@ -323,6 +352,8 @@ class ModCommands(commands.Cog):
                 await ctx.send(embed = discord.Embed(title = ":x: You did not include a user!", description = "\n", color = 0xff0000))
             elif isinstance(error, discord.ext.commands.BadArgument):
                 await ctx.send(embed = discord.Embed(title = ":x: Could not find the targeted user.", description = "\n", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
                 await ctx.send(embed = standardCommandlineError(error))
 
