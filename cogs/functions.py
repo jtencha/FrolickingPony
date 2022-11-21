@@ -15,8 +15,6 @@ class Functions(commands.Cog):
         @bot.command(aliases = ["av"])
         @bot_has_permissions(manage_webhooks = True)
         async def avatar(ctx, member: Optional[Member]):
-            print(type(member))
-            #stupid async await
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
@@ -59,14 +57,6 @@ class Functions(commands.Cog):
             embed.set_thumbnail(url = server.icon_url)
             await ctx.send(embed = embed)
 
-        @stats.error
-        async def fail(ctx, error):
-            if isinstance(error, BotMissingPermissions):
-                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
-            else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
-
         #Bot response time
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
@@ -104,17 +94,6 @@ class Functions(commands.Cog):
                 await poll.add_reaction("3️⃣")
                 if option_four != None:
                     await poll.add_reaction("4️⃣")
-
-        #Checking for garbage
-        @poll.error
-        async def denied(ctx, error):
-            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include at least two poll options!", color = 0xff0000))
-            elif isinstance(error, BotMissingPermissions):
-                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
-            else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
 
         #info on user
         @bot.command(aliases = ["a"])
@@ -173,17 +152,6 @@ class Functions(commands.Cog):
             embed.set_thumbnail(url = user.avatar_url)
             await ctx.send(embed = embed)
 
-
-        @about.error
-        @avatar.error
-        async def incorrect(ctx, error):
-            if isinstance(error, BotMissingPermissions):
-                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
-            else:
-                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
-                print(error)
-
         @bot.command(aliases = ["ei"])
         @bot_has_permissions(manage_webhooks = True)
         async def eightball(ctx, question):
@@ -192,16 +160,6 @@ class Functions(commands.Cog):
                 return
             choices = ["No", "I guess", "Absolutely not.", "Ha, you wish", "Yes! Yes! and Yes!", "Unclear. Check back later.", "Without a doubt.", "If you say so", "Sussy", "Kinda sus not gonna lie"]
             await ctx.send(random.choice(choices))
-
-        @eightball.error
-        async def bad(ctx, error):
-            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
-                await ctx.send("You need to ask me something...")
-            elif isinstance(error, BotMissingPermissions):
-                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
-            else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
 
         @bot.command(aliases = ["e"])
         @bot_has_permissions(manage_webhooks = True)
@@ -305,8 +263,8 @@ class Functions(commands.Cog):
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
         async def support(ctx):
-            await ctx.send("Join this server for official release notes and development programs.")
-            await ctx.send("https://discord.gg/ffHUnEy7gM")
+            await ctx.send("FrolickingPony's Home:")
+            await ctx.send("https://discord.gg/PUD6jkgJGn")
 
         @bot.command(aliases = ["set"])
         @bot_has_permissions(manage_webhooks = True)
@@ -315,6 +273,7 @@ class Functions(commands.Cog):
                 if setting == None and new == None:
                     with open("settings.txt", "r") as f:
                         lines = f.readlines()
+                        f.close()
 
                     economyStatus = None
                     modStatus = None
@@ -369,32 +328,71 @@ class Functions(commands.Cog):
                         elif new == "disable":
                             new = "f"
                         else:
-                            await ctx.send(title = ":x: Error", description = "Invalid status. Only use enable or disable.", color = 0xff0000)
+                            await ctx.send(title = ":x: Error", description = "Invalid status. Use keywords \"enable\" or \"disable\"", color = 0xff0000)
                             return
 
                         with open("settings.txt", "r") as f:
                             lines = f.readlines()
+                            f.close()
                         with open("settings.txt", "w") as f:
                             for line in lines:
-                                serverid = line[:line.index(":")]
-                                usetting = line[line.index(":") + 1:line.index(";")]
-                                status = line[line.index(";") + 1:]
-                                if (int(serverid) == ctx.message.guild.id):
-                                    if usetting.lower() == setting:
-                                        f.write(str(ctx.message.guild.id) + ":" + setting + ";" + new + "\n")
-                                        await ctx.send(":white_check_mark: Updated {0} status".format(setting))
-                                        if usetting.lower() == "developer" and new.lower() == "t":
-                                            await ctx.send(embed = discord.Embed(title = ":x: WARNING", description = "Enabling the developer version of the bot grants early access to unreleased features, but since these features haven't been released they are very unstable, and may cause unwanted effects.", color = 0xff0000))
+                                if (line.find(";") == -1 or line.find(":") == -1):
+                                    continue
+                                else:
+                                    serverid = line[:line.index(":")]
+                                    usetting = line[line.index(":") + 1:line.index(";")]
+                                    status = line[line.index(";") + 1:]
+                                    if (int(serverid) == ctx.message.guild.id):
+                                        if usetting.lower() == setting:
+                                            f.write(str(ctx.message.guild.id) + ":" + setting + ";" + new + "\n")
+                                            await ctx.send(":white_check_mark: Updated {0} status".format(setting))
+                                            if usetting.lower() == "developer" and new.lower() == "t":
+                                                await ctx.send(embed = discord.Embed(title = ":x: WARNING", description = "Enabling the developer version of the bot grants early access to unreleased features that can lead to destabalization or unwanted results.", color = 0xff0000))
+                                        else:
+                                            f.write(line)
                                     else:
                                         f.write(line)
-                                else:
-                                    f.write(line)
                     else:
                         await ctx.send(embed = discord.Embed(title = ":x: Error", description = "That setting does not exist!", color = 0xff0000))
                         return
             else:
                 await ctx.send(embed = discord.Embed(title = ":x: Error", description = "Only server administrators can configure settings with the bot.", color = 0xff0000))
 
+        #--EXCEPTION HANDLING--
+        #A lot of commands have different handlers due to the diverse amount of responses that need to be returned
+
+        @about.error
+        @avatar.error
+        async def incorrect(ctx, error):
+            if isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                #print(error)
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
+
+        @poll.error
+        async def denied(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "You must include at least two poll options!", color = 0xff0000))
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
+
+        @eightball.error
+        async def bad(ctx, error):
+            if isinstance(error, discord.ext.commands.MissingRequiredArgument):
+                await ctx.send("You need to ask me something...")
+            elif isinstance(error, BotMissingPermissions):
+                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
+            else:
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
         @embed.error
         async def fail(ctx, error):
@@ -404,9 +402,12 @@ class Functions(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                await ctx.send("`{0}`".format(error))
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
         @contact.error
+        @stats.error
         async def failed(ctx, error):
             if isinstance(error, discord.ext.commands.MissingRequiredArgument):
                 embed = discord.Embed(title = ":x: Error", description = "You did not provide a message!", color = 0xff0000)
@@ -417,8 +418,9 @@ class Functions(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
         @blacklist.error
         @unblacklist.error
@@ -430,8 +432,9 @@ class Functions(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                embed = discord.Embed(title = ":x: Error", description = "```{0}```".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
 def setup(bot):
     bot.add_cog(Functions(bot))

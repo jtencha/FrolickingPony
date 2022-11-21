@@ -7,12 +7,6 @@ import asyncio
 import random
 from bot import *
 
-'''
-----------------------
-TO-DO:
--Add bot money on server addition
-'''
-
 class Economy(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -21,75 +15,73 @@ class Economy(commands.Cog):
         @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def work(ctx):
+            #check if user is banned from the bot
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
+            #check if economy is enabled in the server
             elif isAllowed("economy", ctx.message.guild.id) == False:
                 await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
-
-            id = str(ctx.message.author.id)
-            paycheck = random.choice([x for x in range(100, 300)])
-            count = 0
-            with open("money.txt", "r") as f:
-                try:
-                    fl = f.readlines()
-                    for line in fl:
-                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
-                        else:
-
-                            ind = line.index(":")
-                            sind = line.index("\n")
-                            serverind = line.index(";")
-                            userid = line[serverind + 1:ind]
-                            if (id == userid):
-                                serverid = line[:serverind]
-                                if (int(serverid) == ctx.message.guild.id):
-                                    previous = line[ind + 1:sind]
-                                    count += 1
-                    f.close()
-                except Exception as e:
-                    channel = bot.get_channel(942166599710965831)
-                    await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
-
-
-            if (count == 0):
-                with open("money.txt", "a") as f:
-                    set = str(ctx.message.guild.id) + ";" + id + ":" + str(paycheck) + "\n"
-                    f.write(set)
-                    f.close()
-                await ctx.send("You gained {0} :coin: from working.".format(paycheck))
-                return
+            #both pass? execute command
             else:
-                tota = int(previous) + int(paycheck)
+                id = str(ctx.message.author.id)
+                paycheck = random.choice([x for x in range(100, 300)])
+                count = 0
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
-                with open("money.txt", "w") as f:
-                    try:
+                    f.close()
+
+                for line in fl:
+                    #sanity check
+                    if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                        channel = bot.get_channel(942166599710965831)
+                        await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                    else:
+                        ind = line.index(":")
+                        sind = line.index("\n")
+                        serverind = line.index(";")
+                        userid = line[serverind + 1:ind]
+                        if (id == userid):
+                            serverid = line[:serverind]
+                            if (int(serverid) == ctx.message.guild.id):
+                                previous = line[ind + 1:sind]
+                                count += 1
+
+                if (count == 0):
+                    set = str(ctx.message.guild.id) + ";" + id + ":" + str(paycheck) + "\n"
+                    with open("money.txt", "a") as f:
+                        f.write(set)
+                        f.close()
+                    await ctx.send("You gained {0} :coin: from working.".format(paycheck))
+                    return
+                else:
+                    tota = int(previous) + int(paycheck)
+                    with open("money.txt", "r") as f:
+                        fl = f.readlines()
+                    with open("money.txt", "w") as f:
                         for line in fl:
-                            #channel = bot.get_channel(942166599710965831)
-                            #await channel.send(line)
-                            ind = line.index(":")
-                            serverind = line.index(";")
-                            userid = line[serverind + 1:ind]
-                            if (id == userid):
-                                serverid = line[:serverind]
-                                if (int(serverid) == ctx.message.guild.id):
-                                    total = str(tota)
-                                    set = str(serverid) + ";" + id + ":" + total + "\n"
-                                    f.write(set)
+                            if (line.find(";") == -1 or line.find(":") == -1):
+                                channel = bot.get_channel(942166599710965831)
+                                await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                            else:
+                                ind = line.index(":")
+                                serverind = line.index(";")
+                                userid = line[serverind + 1:ind]
+                                if (id == userid):
+                                    serverid = line[:serverind]
+                                    if (int(serverid) == ctx.message.guild.id):
+                                        total = str(tota)
+                                        set = str(serverid) + ";" + id + ":" + total + "\n"
+                                        f.write(set)
+                                    else:
+                                        f.write(line)
                                 else:
                                     f.write(line)
-                            else:
-                                f.write(line)
-                        f.close()
-                    except Exception as e:
-                        channel = bot.get_channel(942166599710965831)
-                        await channel.send("<@687081333876719740> work crashed with user {0} in {1}. Error: {2}".format(ctx.message.author, ctx.guild, e))
 
-                await ctx.send("You gained {0} :coin: from working.".format(paycheck))
-                return
+                        f.close()
+                        await ctx.send("You gained {0} :coin: from working.".format(paycheck))
+                        return
 
         @bot.command(aliases = ["bal"])
         @bot_has_permissions(manage_webhooks = True)
@@ -100,14 +92,17 @@ class Economy(commands.Cog):
             elif isAllowed("economy", ctx.message.guild.id) == False:
                 await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
+            else:
+                id = str(ctx.message.author.id)
+                amount = 0
+                with open("money.txt", "r") as f:
+                    fl = f.readlines()
+                    f.close()
 
-            id = str(ctx.message.author.id)
-            amount = 0
-            with open("money.txt", "r") as f:
-                fl = f.readlines()
                 for line in fl:
                     if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                        continue
+                        channel = bot.get_channel(942166599710965831)
+                        await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
                     else:
                         ind = line.index(":") #start of balance
                         sind = line.index("\n") #end of line
@@ -117,9 +112,10 @@ class Economy(commands.Cog):
                             serverid = line[:serverind]
                             if (int(serverid) == ctx.message.guild.id):
                                 amount = line[ind + 1:sind]
+                                await ctx.send(embed = discord.Embed(title = "{0}'s Balance in {1}".format(ctx.message.author, ctx.guild), description = "{0} :coin:".format(amount), color = 0xff6633))
+                                return
 
-                await ctx.send(embed = discord.Embed(title = "{0}'s Balance in {1}".format(ctx.message.author, ctx.guild), description = "{0} :coin:".format(amount), color = 0xff6633))
-                f.close()
+                await ctx.send(embed = discord.Embed(title = "{0}'s Balance in {1}".format(ctx.message.author, ctx.guild), description = "0 :coin:", color = 0xff6633))
 
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
@@ -133,51 +129,55 @@ class Economy(commands.Cog):
             elif isAllowed("economy", ctx.message.guild.id) == False:
                 await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
-
-
-            if ctx.message.author.guild_permissions.administrator:
-
-                id = str(member.id)
-                try:
-                    uAmount = int(uAmount)
-                except:
-                    await ctx.send(embed = discord.Embed(title = ":x: You must provide an integer amount to add", color = 0xff0000))
-                    return
-
-                if int(uAmount) > 10000:
-                      await ctx.send(":x: You can only add up to 10,000 :coin: at a time!")
-                      return
-
-                with open("money.txt", "r") as f:
-                    fl = f.readlines()
-                    f.close()
-                with open("money.txt", "w") as f:
-                    count = 0
-                    for line in fl:
-                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
-                        else:
-                            ind = line.index(":")
-                            sind = line.index("\n")
-                            serverind = line.index(";")
-                            userid = line[serverind + 1:ind]
-                            if (id == userid):
-                                serverid = line[:serverind]
-                                if (int(serverid) == ctx.message.guild.id):
-                                    amount = line[ind + 1:sind]
-                                    newAmount = int(amount) + int(uAmount)
-                                    snew = str(newAmount)
-                                    set = str(serverid) + ";" + id + ":" + snew + "\n"
-                                    f.write(set)
-                                    await ctx.send("Successfully added {0} :coin: to {1}'s bank".format(uAmount, member))
-                                    count += 1
-                            else:
-                                f.write(line)
-
-                    if (count == 0):
-                        await ctx.send(":x: This user has to run the ?work command in order to be registered in the system. ")
             else:
-                await ctx.send(":x: You don't have permission to run this command! Required: Administrator")
+                if ctx.message.author.guild_permissions.administrator:
+                    id = str(member.id)
+                    try:
+                        uAmount = int(uAmount)
+                    except:
+                        await ctx.send(embed = discord.Embed(title = ":x: You must provide an integer amount to add", color = 0xff0000))
+                        return
+
+                    if int(uAmount) > 10000:
+                        await ctx.send(":x: You can only add up to 10,000 :coin: at a time!")
+                        return
+                    elif int(uAmount) < 1:
+                        await ctx.send(":x: Invalid amount provided.")
+                        return
+
+                    with open("money.txt", "r") as f:
+                        fl = f.readlines()
+                        f.close()
+                    with open("money.txt", "w") as f:
+                        count = 0
+                        for line in fl:
+                            if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                                channel = bot.get_channel(942166599710965831)
+                                await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                            else:
+                                ind = line.index(":")
+                                sind = line.index("\n")
+                                serverind = line.index(";")
+                                userid = line[serverind + 1:ind]
+                                if (id == userid):
+                                    serverid = line[:serverind]
+                                    if (int(serverid) == ctx.message.guild.id):
+                                        amount = line[ind + 1:sind]
+                                        newAmount = int(amount) + int(uAmount)
+                                        snew = str(newAmount)
+                                        set = str(serverid) + ";" + id + ":" + snew + "\n"
+                                        f.write(set)
+                                        await ctx.send("Successfully added {0} :coin: to {1}'s bank".format(uAmount, member))
+                                        count += 1
+                                    else:
+                                        f.write(line)
+                                else:
+                                    f.write(line)
+
+                        if (count == 0):
+                            await ctx.send(":x: Due to sourecode quirks, this user has to run the ?work command in order to be registered in the system to receive money.")
+                else:
+                    await ctx.send(":x: You don't have permission to run this command! Required: Administrator")
 
         @bot.command(aliases = ["subtractmoney"])
         @bot_has_permissions(manage_webhooks = True)
@@ -192,7 +192,6 @@ class Economy(commands.Cog):
                 await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
 
-
             if ctx.message.author.guild_permissions.administrator:
                 id = str(member.id)
                 try:
@@ -204,6 +203,9 @@ class Economy(commands.Cog):
                 if int(uAmount) > 10000:
                       await ctx.send(":x: You can only remove up to 10,000 :coin: at a time!")
                       return
+                elif int(uAmount) < 1:
+                    await ctx.send(":x: Invalid amount provided.")
+                    return
 
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
@@ -212,7 +214,8 @@ class Economy(commands.Cog):
                     count = 0
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
+                            channel = bot.get_channel(942166599710965831)
+                            await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -229,7 +232,7 @@ class Economy(commands.Cog):
                                     await ctx.send("Successfully removed {0} :coin: from {1}'s bank".format(uAmount, member))
                                     count += 1
                             else:
-                                f.write(line + "\n")
+                                f.write(line)
 
                     if (count == 0):
                         await ctx.send(":x: You cannot take money from a user that has none.")
@@ -250,63 +253,72 @@ class Economy(commands.Cog):
             people = []
             amounts = []
 
-            embed = discord.Embed(title = "{0}'s Leaderboard".format(ctx.guild), description = "\n", color = 0xff6633)
             with open("money.txt", "r") as f:
                 fl = f.readlines()
-                count = 1
-                for line in fl:
-                    if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                        continue
-                    else:
-                        ind = line.index(":")
-                        serverind = line.index(";")
-                        sind = line.index("\n")
-                        userid = line[serverind + 1:ind]
-                        serverid = line[:serverind]
-                        amount = line[ind + 1:sind]
-
-                        if (int(serverid) == ctx.message.guild.id):
-                            people.append(line)
-                            print("Added " + line)
-                            amounts.append(amount)
-                            print("Added " + amount)
-                            #embed.add_field(name = str(count) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
-                            #count += 1
                 f.close()
+
+            count = 1
+            for line in fl:
+                if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                    channel = bot.get_channel(942166599710965831)
+                    await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                else:
+                    ind = line.index(":")
+                    serverind = line.index(";")
+                    sind = line.index("\n")
+                    userid = line[serverind + 1:ind]
+                    serverid = line[:serverind]
+                    amount = line[ind + 1:sind]
+
+                    if (int(serverid) == ctx.message.guild.id):
+                        people.append(line)
+                        print("Added " + line)
+                        amounts.append(amount)
+                        print("Added " + amount)
+
 
             amounts.sort(reverse = True)
             amounts.sort(reverse = True, key = len)
 
             print(amounts)
-            i = 1;
+            i = 1
 
+            ordered = []
             for y in amounts:
                 for x in people:
-                    ind = x.index(":")
-                    serverind = x.index(";")
-                    sind = x.index("\n")
-                    userid = x[serverind + 1:ind]
-                    amount = x[ind + 1:sind]
-                    print(amount + " vs. " + y)
-                    if (amount == y):
-                        embed.add_field(name = str(i) + ". ", value = "<@" + str(userid) + ">: " + amount + " :coin:", inline = False)
-                        i+= 1
+                    if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                        channel = bot.get_channel(942166599710965831)
+                        await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                    else:
+                        ind = x.index(":")
+                        serverind = x.index(";")
+                        sind = x.index("\n")
+                        userid = x[serverind + 1:ind]
+                        amount = x[ind + 1:sind]
+                        print(amount + " vs. " + y)
+                        if (amount == y):
+                            add_field = ("**" + str(i) + ".** <@" + str(userid) + ">: " + amount + " :coin: \n")
+                            ordered.append(add_field)
+                            i+= 1
 
-            #embed.add_field(name = people, value = "‎‎‎‎‎", inline = False)
+            order = ""
+            for line in ordered:
+                order += line
 
-            await ctx.send(embed = embed)
+            await ctx.send(embed = discord.Embed(title = "{0}'s Leaderboard".format(ctx.guild), description = order, color = 0xff6633))
 
         @bot.command(aliases = ["d"])
         @bot_has_permissions(manage_webhooks = True)
         @commands.cooldown(1, 3600, commands.BucketType.member)
         async def dice(ctx, uamount: int):
+            id = str(ctx.message.author.id)
+
             if isBanned(str(ctx.message.author.id), 1) != False:
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             elif isAllowed("economy", ctx.message.guild.id) == False:
                 await ctx.send(embed = discord.Embed(title = ":x: Command Disabled", description = "A server administrator has disabled the economy features of this bot.", color = 0xff0000))
                 return
-
             else:
                 if int(uamount) > 300:
                     await ctx.send(":x: You cannot bet more than 300 :coin: at a time!")
@@ -317,23 +329,25 @@ class Economy(commands.Cog):
                 else:
                     with open("money.txt", "r") as f:
                         fl = f.readlines()
-                        for line in fl:
-                            if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                                continue
-                            else:
-                                ind = line.index(":")
-                                sind = line.index("\n")
-                                serverind = line.index(";")
-                                userid = line[serverind + 1:ind]
-                                if (id == userid):
-                                    serverid = line[:serverind]
-                                    if (int(serverid) == ctx.message.guild.id):
-                                        amount = line[ind + 1:sind]
-                                        if amount > uamount:
-                                            await ctx.send(":x: You do not have enough money to do this!")
-                                            dice.reset_cooldown(ctx)
-                                            return
                         f.close()
+
+                    for line in fl:
+                        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+                            channel = bot.get_channel(942166599710965831)
+                            await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
+                        else:
+                            ind = line.index(":")
+                            sind = line.index("\n")
+                            serverind = line.index(";")
+                            userid = line[serverind + 1:ind]
+                            if (id == userid):
+                                serverid = line[:serverind]
+                                if (int(serverid) == ctx.message.guild.id):
+                                    amount = line[ind + 1:sind]
+                                    if amount > uamount:
+                                        await ctx.send(":x: You do not have enough money to do this!")
+                                        dice.reset_cooldown(ctx)
+                                        return
 
                     list = [x for x in range(1, 7)]
                     p_one = random.choice(list)
@@ -352,13 +366,9 @@ class Economy(commands.Cog):
 
                     if p > c:
                         await ctx.send("Your score is higher than mine! You won **{0}** :coin:!".format(uamount))
-                        #snew = int(amount) + int(uamount)
-                        #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
                         set = int(uamount)
                     elif p < c:
                         await ctx.send("My score is higher than yours :smirk:. You lost **{0}** :coin:".format(uamount))
-                        #snew = int(amount) - int(uamount)
-                        #set = str(serverid) + ";" + id + ":" + str(snew) + "\n"
                         set = -1 * int(uamount)
                     else:
                         await ctx.send("Fine... we'll call it a draw.")
@@ -366,16 +376,19 @@ class Economy(commands.Cog):
 
                     with open("money.txt", "r") as f:
                         fla = f.readlines()
+                        f.close()
+
                     with open("money.txt", "w") as f:
                         for line in fla:
                             if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                                continue
+                                channel = bot.get_channel(942166599710965831)
+                                await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
                             else:
                                 ind = line.index(":")
                                 sind = line.index("\n")
                                 serverind = line.index(";")
                                 userid = line[serverind + 1:ind]
-                                if (ctx.message.author.id == int(userid)):
+                                if (int(id) == int(userid)):
                                     serverid = line[:serverind]
                                     amount = line[ind + 1:sind]
                                     if (int(serverid) == ctx.message.guild.id):
@@ -402,10 +415,13 @@ class Economy(commands.Cog):
                 count = 0
                 with open("money.txt", "r") as f:
                     fl = f.readlines()
+                    f.close()
+
                 with open("money.txt", "w") as f:
                     for line in fl:
                         if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
-                            continue
+                            channel = bot.get_channel(942166599710965831)
+                            await channel.send("<@687081333876719740> bot flagged {0}. Review `money.txt`".format(line))
                         else:
                             ind = line.index(":")
                             sind = line.index("\n")
@@ -425,25 +441,9 @@ class Economy(commands.Cog):
                             else:
                               f.write(line)
 
-                        if count == 0:
-                            f.write(str(serverid) + ";" + userid + ":" + str(sum) + "\n")
-                            await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
-
-
-                    f.close()
-
-
-
-        @daily.error
-        async def special(ctx, error):
-            if isinstance(error, commands.CommandOnCooldown):
-                time = int((round(error.retry_after, 0) / 60) / 60)
-                await ctx.send(embed = discord.Embed(title = ":x: You are still on cooldown for this command!", description = "You can use this command in {0} hours".format(time), color = 0xff0000))
-            elif isinstance(error, BotMissingPermissions):
-                await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
-            else:
-                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
-
+                    if count == 0:
+                        f.write(str(ctx.message.guild.id) + ";" + str(ctx.message.author.id) + ":" + str(sum) + "\n")
+                        await ctx.send("You claimed your daily pay of {0} :coin:.".format(sum))
 
         @work.error
         @addmoney.error
@@ -451,6 +451,7 @@ class Economy(commands.Cog):
         @removemoney.error
         @leaderboard.error
         @dice.error
+        @daily.error
         #@number.error
         async def fail(ctx, error):
             if isinstance(error, commands.CommandOnCooldown):
@@ -461,8 +462,10 @@ class Economy(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
-
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                #print(error)
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
 def setup(bot):
     bot.add_cog(Economy(bot))

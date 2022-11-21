@@ -32,7 +32,7 @@ class Help(commands.Cog):
                 embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard` | `dice` | `daily`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
                 embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents` | `settings` | `changestatus` ", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.9\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.10\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -130,8 +130,8 @@ class Help(commands.Cog):
             if isinstance(error, BotMissingPermissions):
                 await ctx.send("I don't have permission to run this command! Required {0}".format(join(error.missing_perms)))
             else:
-                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
-
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 def setup(bot):
     bot.add_cog(Help(bot))

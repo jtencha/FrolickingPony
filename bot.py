@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import stayinAlive
 import time
+import datetime
 
 starttime = time.time()
 
@@ -11,15 +12,13 @@ token = os.environ['bottoken']
 #Prefix can be changed here
 prefix = "?"
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents = discord.Intents(messages = True, guilds = True, members = True)
 
 bot = commands.Bot(command_prefix = prefix, intents = intents)
 bot.remove_command("help")
 
 owner_id = "687081333876719740"
-ember = "825212502978723861"
-
 #check on entry
 def isBanned(id, type = 1):
     if type == 1:
@@ -42,15 +41,18 @@ def isAllowed(perm, id):
         f.close()
 
     for line in fl:
-        serverid = line[:line.index(":")]
-        usetting = line[line.index(":") + 1:line.index(";")]
-        status = line[line.index(";") + 1:]
-        if (int(serverid) == id):
-            if perm == usetting:
-                if status == "t\n":
-                    return True
-                else:
-                    return False
+        if (line.find(";") == -1 or line.find(":") == -1 or line.find("\n") == -1):
+            continue
+        else:
+            serverid = line[:line.index(":")]
+            usetting = line[line.index(":") + 1:line.index(";")]
+            status = line[line.index(";") + 1:]
+            if (int(serverid) == id):
+                if perm == usetting:
+                    if status == "t\n":
+                        return True
+                    else:
+                        return False
 
 #basic trigger stuff
 @bot.event
@@ -66,10 +68,12 @@ async def on_guild_join(Guild):
         f.write(str(Guild.id) + ":" + "moderation;f\n")
         f.write(str(Guild.id) + ":" + "gibamdib;f\n")
         f.write(str(Guild.id) + ":" + "developer;f\n")
+        f.write(str(Guild.id) + ":" + "hi;t\n")
+
 
 @bot.command()
 async def changestatus(ctx, *, status):
-    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+    if (str(ctx.message.author.id) == str(owner_id)):
         await bot.change_presence(activity = discord.Game(status))
         await ctx.send("Updated status")
     else:
@@ -79,7 +83,7 @@ async def changestatus(ctx, *, status):
 #terminate bot
 @bot.command()
 async def sleep(ctx):
-    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+    if (str(ctx.message.author.id) == str(owner_id)):
         await ctx.send("Goodnight...")
         print("User terminated the bot.")
         quit()
@@ -89,7 +93,7 @@ async def sleep(ctx):
 #reload files
 @bot.command()
 async def reload(ctx):
-    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+    if (str(ctx.message.author.id) == str(owner_id)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.unload_extension("cogs.{0}".format(filename[:-3]))
@@ -103,7 +107,7 @@ async def reload(ctx):
 #manually reload in case something doesn't work
 @bot.command()
 async def unpack(ctx):
-    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+    if (str(ctx.message.author.id) == str(owner_id)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.load_extension("cogs.{0}".format(filename[:-3]))
@@ -114,7 +118,7 @@ async def unpack(ctx):
 @bot.command()
 async def pack(ctx):
 
-    if (str(ctx.message.author.id) == str(owner_id)) or (str(ctx.message.author.id) == str(ember)):
+    if (str(ctx.message.author.id) == str(owner_id)):
         for filename in os.listdir("./cogs"):
             if filename.endswith(".py"):
                 bot.unload_extension("cogs.{0}".format(filename[:-3]))
@@ -139,7 +143,7 @@ async def printcontents(ctx, file):
 
 
 @bot.command()
-async def uptime(ctx):
+async def debug(ctx):
     if isBanned(str(ctx.message.author.id), 1) != False:
         await ctx.send(embed = isBanned(str(ctx.message.author.id)))
         return
@@ -153,18 +157,33 @@ async def uptime(ctx):
     totaltime = "{0} hours {1} minutes {2} seconds".format(int(h), int(m), int(s))
 
     await ctx.send(embed = discord.Embed(title = "Bot Uptime", description = "FrolickingPony has been online for " + str(totaltime), color = 0x009933))
+'''
+@bot.event
+async def on_message(message):
+    message_content = message.content.strip().lower()
+    if message_content == "hi":
+        if isAllowed("hi", ctx.message.guild.id) == False:
+            return
+
+        await message.channel.send(":x: {0}, that word is not allowed here!".format(message.author.mention))
+        channel = bot.get_channel(1032074233548918855)
+        await message.delete()
+        now = datetime.datetime.now()
+        await channel.send(embed = discord.Embed(title = "Word Censored", description = "{0} sent the phrase `{1}` in {2}. Deleted at {3}".format(message.author.mention, message_content, message.guild, now.strftime('%Y-%m-%d %H:%M:%S')), color = 0xff0000))
+'''
 
 @reload.error
 @sleep.error
 @unpack.error
 @pack.error
-@uptime.error
+@debug.error
 async def onError(ctx, error):
     await ctx.send(embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000))
 
 for filename in os.listdir("./cogs"):
     if filename.endswith(".py"):
         bot.load_extension("cogs.{0}".format(filename[:-3]))
+        print("loaded {0}".format(filename))
 
 stayinAlive.live()
 

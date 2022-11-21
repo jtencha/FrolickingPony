@@ -30,10 +30,6 @@ class ModCommands(commands.Cog):
             else:
                 raise ValueError
 
-        def standardCommandlineError(error):
-            embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
-            return embed
-
         def defaultError(error):
             embed = discord.Embed(title = ":x:" + error, description = "\n", color = 0xff0000)
             return embed
@@ -327,7 +323,9 @@ class ModCommands(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                await ctx.send(embed = standardCommandlineError(error))
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
         @unban.error
         async def failed(ctx, error):
@@ -338,7 +336,9 @@ class ModCommands(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                await ctx.send(embed = standardCommandlineError(error))
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
         #return an error if something wonky happened
         @kick.error
@@ -355,7 +355,9 @@ class ModCommands(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                await ctx.send(embed = standardCommandlineError(error))
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
 def setup(bot):
     bot.add_cog(ModCommands(bot))

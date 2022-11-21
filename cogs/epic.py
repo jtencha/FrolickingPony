@@ -18,13 +18,16 @@ class Epic(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
 
-            await ctx.send(random.choice(["Guetzali Guetzali",
+            embed = discord.Embed(title = "", description = "", color = 0xff6633)
+            embed.set_image(url = random.choice([
             "https://media.discordapp.net/attachments/842447676414361620/843713059033710632/60a1f6f95aa22378467759.gif",
             "https://media.discordapp.net/attachments/404803931227553802/860570669322469377/quetzali.gif",
             "https://media.discordapp.net/attachments/863137688470814741/863936864054149140/makesweet-kxksih.gif",
             "https://media.discordapp.net/attachments/404803931227553802/859942873864994816/697995591921172532-8.gif",
             "https://media.discordapp.net/attachments/842447676414361620/843713059033710632/60a1f6f95aa22378467759.gif",
             ]))
+            await ctx.send(embed = embed)
+
 
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
@@ -177,7 +180,10 @@ class Epic(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             else:
-                await ctx.send("https://c.tenor.com/b7jgsT3ctlwAAAAC/when-the-money-fast-money.gif")
+                embed = discord.Embed(title = "", description = "", color = 0xff6633)
+                embed.set_image(url = "https://c.tenor.com/b7jgsT3ctlwAAAAC/when-the-money-fast-money.gif")
+                await ctx.send(embed = embed)
+
 
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
@@ -186,7 +192,9 @@ class Epic(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             else:
-                await ctx.send("https://c.tenor.com/nbJLAkkQ4QQAAAAC/woody-laugh.gif")
+                embed = discord.Embed(title = "", description = "", color = 0xff6633)
+                embed.set_image(url = "https://c.tenor.com/nbJLAkkQ4QQAAAAC/woody-laugh.gif")
+                await ctx.send(embed = embed)
 
         @bot.command()
         @bot_has_permissions(manage_webhooks = True)
@@ -195,9 +203,12 @@ class Epic(commands.Cog):
                 await ctx.send(embed = isBanned(str(ctx.message.author.id)))
                 return
             else:
-                await ctx.send('https://c.tenor.com/oCxcur4d32wAAAAC/squidward-spare-change.gif')
+                embed = discord.Embed(title = "", description = "", color = 0xff6633)
+                embed.set_image(url = 'https://c.tenor.com/oCxcur4d32wAAAAC/squidward-spare-change.gif')
+                await ctx.send(embed = embed)
 
-
+        #--EXCEPTION HANDLING--
+        #Dump all of these into one handler
         @impersonate.error
         @block.error
         @amogus.error
@@ -213,8 +224,9 @@ class Epic(commands.Cog):
             elif isinstance(error, BotMissingPermissions):
                 await ctx.send(f"I don't have permission to run this command! Required: {' '.join(error.missing_perms)}")
             else:
-                embed = discord.Embed(title = ":x: Error", description = "{0}".format(error), color = 0xff0000)
-                await ctx.send(embed = embed)
+                await ctx.send(embed = discord.Embed(title = ":x: Fatal Error", description = "An internal error prevented the bot from finishing your request. Please try again later.\n\nReference: `{0}`".format(error), color = 0xff0000))
+                channel = bot.get_channel(942166599710965831)
+                await channel.send("<@687081333876719740> error thrown in {0}".format(ctx.message.guild))
 
 def setup(bot):
     bot.add_cog(Epic(bot))
