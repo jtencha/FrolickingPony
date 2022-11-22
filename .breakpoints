@@ -3,32 +3,32 @@
     "bot.py": [
       {
         "id": "b3297412-c5dd-4189-9b73-0e709ecddf1d",
-        "line": 187,
-        "version": 2361,
-        "index": 7177
+        "line": 1,
+        "version": 2364,
+        "index": 0
       }
     ],
     "cogs/economy.py": [
       {
         "id": "0c252380-70ce-40ef-8b02-fe7e29ec78fc",
-        "line": 469,
-        "version": 3235,
-        "index": 23548
+        "line": 1,
+        "version": 3237,
+        "index": 0
       }
     ],
     "cogs/functions.py": [
       {
         "id": "afaf98c9-da51-424e-943e-bd67fb1b2e4d",
-        "line": 438,
-        "version": 3036,
-        "index": 24054
+        "line": 1,
+        "version": 3037,
+        "index": 0
       }
     ],
     "money.txt": [
       {
         "id": "c93b2549-1034-4aed-9ed5-f9c627032721",
         "line": 1,
-        "version": 344,
+        "version": 346,
         "index": 0
       }
     ]

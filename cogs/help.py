@@ -31,8 +31,8 @@ class Help(commands.Cog):
                 embed.add_field(name = "Commands: ", value = "`about` | `amogus` | `avatar` | `block` | `contact` | `eightball` | `embed` | `guetzali` | `help` | `impersonate` | `invite` | `ping` | `poll` | `redpanda` | `sourcecode` | `stats` | `support` ", inline = False)
                 embed.add_field(name = "Economy: ", value = "`work` | `balance` | `addmoney` | `removemoney` | `leaderboard` | `dice` | `daily`")
                 embed.add_field(name = "Mod Commands:", value = "`clear` | `mute` | `unmute` | `kick` | `ban` | `tempban` | `unban` | `nick` | `blacklist` | `unblacklist` | `listblacklist`", inline = False)
-                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `uptime` | `printcontents` | `settings` | `changestatus` ", inline = False)
-                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.10\nDeveloped by: PrancingPony#2112 and discord.py", inline = False)
+                embed.add_field(name = "System:", value = "`sleep` | `reload` | `pack` | `unpack`| `debug` | `printcontents` | `settings` | `changestatus` ", inline = False)
+                embed.add_field(name = "\n\nList 1 of 1", value = "\nBot Version: Version: 1.10.1\nDeveloped by: PrancingPony#2323 and discord.py", inline = False)
                 await ctx.send(embed = embed)
             elif type == "about":
                 await ctx.send(embed = help_template("about", "Get information about a user. Defaults to your own info.", "`about [user]`", "Send messages"))
@@ -98,7 +98,7 @@ class Help(commands.Cog):
                 await ctx.send(embed = help_template("clear", "Clear x messages in a channel or clear messages from a certain user in the last x messages.", "`clear [number] (user)`", "Manage messages"))
             elif type == "block":
                 await ctx.send(embed = help_template("block", "Block users from impersonating you.", "`block`", "Send messages"))
-            elif type == "uptime":
+            elif type == "debug":
                 await ctx.send(embed = help_template("uptime", "Display uptime of the bot.", "`uptime`", "Send messages"))
             elif type == "work":
                 await ctx.send(embed = help_template("work", "Work for digital currency", "`work`", "Send messages"))

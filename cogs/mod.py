@@ -4,7 +4,7 @@ from discord.ext.commands import bot_has_permissions, Bot, BotMissingPermissions
 from discord import Member
 import os
 import asyncio
-from bot import isBanned
+from bot import *
 
 class ModCommands(commands.Cog):
     def __init__(self, bot):
